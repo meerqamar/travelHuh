@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paradise Vista Resort & Spa | Travel Huh?</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components.css' %}">
+</head>
+<body class="bg-light">
+
+  <!-- Navigation -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar__inner">
+      <a href="{% url 'home' %}" class="navbar__logo">
+        <img src="{% static 'logo.jpeg' %}" alt="Travel Huh? Logo" class="site-logo">
+      </a>
+      <ul class="navbar__links">
+        <li><a href="#" class="navbar__link">Travel Info</a></li>
+        <li><a href="#" class="navbar__link">Manage Booking</a></li>
+        <li><a href="{% url 'search-results' %}" class="navbar__link navbar__link--shortlist">Shortlist (0)</a></li>
+      </ul>
+      <div class="navbar__actions">
+        <button class="navbar__action-btn" aria-label="Search">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </button>
+        <button class="navbar__hamburger" id="mobile-menu-btn" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#" class="mobile-menu__link">Travel Info</a>
+    <a href="#" class="mobile-menu__link">Manage Booking</a>
+    <a href="{% url 'search-results' %}" class="mobile-menu__link text-pink">Shortlist (0)</a>
+  </div>
+
+  <main class="page-wrapper" style="padding-bottom: 120px;">
+    
+    <div class="container section section--sm">
+      
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb mb-4">
+        <a href="{% url 'home' %}">Home</a>
+        <span class="breadcrumb__sep">/</span>
+        <a href="{% url 'search-results' %}">Destinations</a>
+        <span class="breadcrumb__sep">/</span>
+        <a href="{% url 'search-results' %}?dest=maldives">Maldives</a>
+        <span class="breadcrumb__sep">/</span>
+        <span class="fw-medium text-text">Paradise Vista Resort & Spa</span>
+      </nav>
+
+      <!-- Image Gallery -->
+      <div class="hotel-gallery">
+        <div class="hotel-gallery__main">
+          <img src="{% static 'images/dest-maldives.jpg' %}" alt="Main Resort View">
+        </div>
+        <div class="hotel-gallery__side">
+          <img src="{% static 'images/hotel-pool.jpg' %}" alt="Resort Pool">
+          <div class="hotel-gallery__more">
+            <img src="{% static 'images/hotel-room.jpg' %}" alt="Hotel Room">
+            <button class="hotel-gallery__more-btn">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+              <span>+12 photos</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hotel Header -->
+      <div class="hotel-header">
+        <div class="hotel-header__info">
+          <div class="stars mb-2">★★★★★</div>
+          <span class="badge badge--outline mb-2 ml-2">Platinum Collection</span>
+          <h1 class="heading-2 mb-2">Paradise Vista Resort & Spa</h1>
+          <div class="result-card__location">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            Maldives, Indian Ocean
+            <a href="#location" class="text-pink ml-2 fw-medium">Show on map</a>
+          </div>
+        </div>
+        <div class="hotel-header__rating">
+          <div class="rating-badge rating-badge--lg">
+            <span class="rating-badge__score">4.8</span>
+            <span class="rating-badge__label">Excellent<br><small>Based on 1,204 reviews</small></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- The Good Stuff -->
+      <section class="hotel-amenities">
+        <h3 class="heading-4 mb-4">The Good Stuff</h3>
+        <div class="amenities-grid">
+          <div class="amenity-item">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pink"><path d="M22 12A10 10 0 0 0 12 2v10z"></path><path d="M12 22A10 10 0 0 0 22 12H12z"></path><path d="M2 12A10 10 0 0 0 12 22V12z"></path><path d="M12 2A10 10 0 0 0 2 12h10z"></path></svg>
+            <span>Beachfront</span>
+          </div>
+          <div class="amenity-item">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pink"><path d="M2 12h20"></path><path d="M12 2v20"></path></svg>
+            <span>Infinity Pool</span>
+          </div>
+          <div class="amenity-item">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pink"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+            <span>Luxury Spa</span>
+          </div>
+          <div class="amenity-item">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pink"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+            <span>Live Entertainment</span>
+          </div>
+          <div class="amenity-item">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pink"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M1.42 9a16 16 0 0 1 21.16 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg>
+            <span>Free High-Speed WiFi</span>
+          </div>
+          <div class="amenity-item">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pink"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <span>24/7 Room Service</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="divider"></div>
+
+      <!-- Sticky Booking Bar Context -->
+      <div class="booking-context-bar bg-green text-white">
+        <div class="booking-context__group">
+          <span class="text-xs fw-bold text-cyan">SELECTED DATES</span>
+          <span class="fw-medium">15 Jul - 22 Jul 2026</span>
+        </div>
+        <div class="booking-context__group">
+          <span class="text-xs fw-bold text-cyan">PASSENGERS</span>
+          <span class="fw-medium">2 Adults</span>
+        </div>
+        <div class="booking-context__group">
+          <span class="text-xs fw-bold text-cyan">BOARD BASIS</span>
+          <span class="fw-medium">All Inclusive</span>
+        </div>
+        <div class="booking-context__price-box">
+          <div class="booking-context__price-label text-xs">Total price</div>
+          <div class="booking-context__price heading-4 text-yellow">£1,376</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="hotel-tabs">
+        <div class="tabs mb-6">
+          <button class="tab-btn active" data-target="rooms">Choose Your Room</button>
+          <button class="tab-btn" data-target="facilities">Facilities</button>
+          <button class="tab-btn" data-target="location">Location</button>
+          <button class="tab-btn" data-target="reviews">Reviews</button>
+        </div>
+
+        <div class="tab-content">
+          <!-- Rooms Tab -->
+          <div class="tab-panel active" id="rooms">
+            <div class="rooms-header mb-4">
+              <h3 class="heading-4">Choose Your Room</h3>
+              <div class="checkbox-group" style="flex-direction: row;">
+                <label class="checkbox-item"><input type="checkbox"> All Inclusive</label>
+                <label class="checkbox-item"><input type="checkbox"> Sea Friendly</label>
+              </div>
+            </div>
+
+            <div class="room-cards">
+              <!-- Room 1 -->
+              <div class="room-card card">
+                <div class="room-card__img">
+                  <img src="{% static 'images/hotel-room.jpg' %}" alt="Standard Twin Room">
+                </div>
+                <div class="room-card__info">
+                  <h4 class="heading-5 mb-2">Standard Twin Room with Balcony</h4>
+                  <ul class="room-card__features mb-3">
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pink"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Sleeps up to 2</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pink"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Sea view guaranteed</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pink"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Air conditioning & free Wi-Fi</li>
+                  </ul>
+                  <div class="badge badge--outline mb-2">Half Board <small>Breakfast & Dinner included</small></div>
+                </div>
+                <div class="room-card__action">
+                  <div class="room-card__price-box">
+                    <span class="text-muted text-xs">+14 Days</span>
+                    <span class="heading-4 text-pink">£729<span class="text-sm">pp</span></span>
+                  </div>
+                  <button class="room-card__select" data-room-name="Standard Twin Room with Balcony" data-board="Half Board" data-price-pp="729">
+                    <span class="room-card__radio"></span>
+                    SELECT
+                  </button>
+                </div>
+              </div>
+
+              <!-- Room 2 -->
+              <div class="room-card card selected">
+                <div class="room-card__img">
+                  <img src="{% static 'images/hotel-pool.jpg' %}" alt="Swim-up Double Room">
+                  <span class="badge badge--pink" style="position: absolute; top: 10px; left: 10px;">Popular</span>
+                </div>
+                <div class="room-card__info">
+                  <h4 class="heading-5 mb-2">Swim-up Double Room with Terrace</h4>
+                  <ul class="room-card__features mb-3">
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pink"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Private pool access</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pink"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Complimentary welcome drink</li>
+                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pink"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Premium minibar included</li>
+                  </ul>
+                  <div class="badge badge--cyan mb-2">All Inclusive <small>All meals, snacks & drinks</small></div>
+                </div>
+                <div class="room-card__action bg-pink-light">
+                  <div class="room-card__price-box">
+                    <span class="text-muted text-xs">+14 Days</span>
+                    <span class="heading-4 text-pink">£989<span class="text-sm">pp</span></span>
+                  </div>
+                  <button class="room-card__select active" data-room-name="Swim-up Double Room with Terrace" data-board="All Inclusive" data-price-pp="989">
+                    <span class="room-card__radio active"></span>
+                    SELECTED
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Other empty tabs for now -->
+          <div class="tab-panel" id="facilities">
+            <h3 class="heading-4 mb-4">Hotel Facilities</h3>
+            <p class="text-muted">Extensive facilities details would appear here.</p>
+          </div>
+          <div class="tab-panel" id="location">
+            <h3 class="heading-4 mb-4">Location Map</h3>
+            <div style="height: 300px; background: #e5e7eb; border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center; color: var(--color-text-muted);">Interactive Map Placeholder</div>
+          </div>
+          <div class="tab-panel" id="reviews">
+            <h3 class="heading-4 mb-4">Reviews</h3>
+            <div class="reviews-grid">
+              <div class="card p-5">
+                <div class="stars mb-2">★★★★★</div>
+                <p class="text-muted mb-4">"Literally said 'Huh?' when I saw the view from my swim-up room. Absolutely stunning resort and the service was world-class."</p>
+                <span class="text-sm fw-bold">— Sarah J., London</span>
+              </div>
+              <div class="card p-5">
+                <div class="stars mb-2">★★★★★</div>
+                <p class="text-muted mb-4">"We didn't go hungry once. The pools are massive and the food was actually good! What an incredible trip, 10/10."</p>
+                <span class="text-sm fw-bold">— Mark T., Manchester</span>
+              </div>
+              <div class="card p-5">
+                <div class="stars mb-2">★★★★☆</div>
+                <p class="text-muted mb-4">"The spa is a total dream. My only complaint is that I had to leave. A truly high-end experience for a great price."</p>
+                <span class="text-sm fw-bold">— Elena H., Bristol</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </main>
+
+  <!-- Sticky Booking Action Bar -->
+  <div class="sticky-bar" style="background: var(--color-white); border-top: 1px solid var(--color-border); box-shadow: 0 -10px 30px rgba(0,0,0,0.05);">
+    <div class="container sticky-bar__inner">
+      <div class="sticky-bar__info" style="align-items: center;">
+        <h3 class="heading-4 text-text m-0" id="booking-room-name">Swim-up Double Room with Terrace</h3>
+        <span class="badge badge--cyan" id="booking-board">All Inclusive</span>
+      </div>
+      <div class="sticky-bar__actions" style="align-items: center;">
+        <div class="text-right mr-4">
+          <div class="text-xs text-muted">Total Price</div>
+          <div class="heading-3 text-pink" id="booking-total">£1,978</div>
+        </div>
+        <a href="{% url 'checkout' %}" class="btn btn--primary btn--xl">Continue <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer (Simplified for inner pages) -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <a href="{% url 'home' %}" class="footer__brand-logo">
+            <img src="{% static 'logo.jpeg' %}" alt="Travel Huh? Logo" class="site-logo">
+          </a>
+          <p class="footer__brand-tagline">You're going where now? Discover destinations that make you double-take.</p>
+        </div>
+        <div>
+          <h4 class="footer__col-title">About</h4>
+          <ul class="footer__links">
+            <li><a href="#" class="footer__link">Why Travel Huh?</a></li>
+            <li><a href="#" class="footer__link">Contact Us</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer__col-title">Trust</h4>
+          <div class="footer__trust-badges">
+            <span class="footer__trust-badge">ATOL</span>
+            <span class="footer__trust-badge">ABTA</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{% static 'js/main.js' %}?v=3"></script>
+  <script src="{% static 'js/hotel.js' %}?v=3"></script>
+</body>
+</html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout | Travel Huh?</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components.css' %}">
+</head>
+<body class="bg-light">
+
+  <!-- Navigation (Simplified for checkout) -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar__inner" style="justify-content: center;">
+      <a href="{% url 'home' %}" class="navbar__logo">
+        <img src="{% static 'logo.jpeg' %}" alt="Travel Huh? Logo" class="site-logo">
+      </a>
+      <div style="position: absolute; right: var(--space-6); display: flex; align-items: center; gap: var(--space-2); color: var(--color-text-muted); font-size: var(--text-sm); font-weight: 500;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg> Secure Checkout
+      </div>
+    </div>
+  </nav>
+
+  <main class="page-wrapper" style="padding-bottom: 80px;">
+    
+    <div class="container section section--sm">
+      
+      <!-- Progress Stepper -->
+      <div class="checkout-stepper mb-10">
+        <div class="steps">
+          <div class="step active">
+            <div class="step__circle">1</div>
+            <div class="step__label">Traveller Details</div>
+          </div>
+          <div class="step">
+            <div class="step__circle">2</div>
+            <div class="step__label">Extras</div>
+          </div>
+          <div class="step">
+            <div class="step__circle">3</div>
+            <div class="step__label">Payment</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Checkout Layout -->
+      <div class="checkout-layout">
+        
+        <!-- Left Column: Forms -->
+        <div class="checkout-main">
+          
+          <h2 class="heading-3 mb-6">Passenger 1 <span class="text-muted text-lg fw-medium">(Lead Name)</span></h2>
+          
+          <div class="card p-6 mb-8">
+            <h3 class="heading-5 mb-4 border-bottom pb-4" style="border-bottom: 1px solid var(--color-border); padding-bottom: 1rem;">Personal Details</h3>
+            
+            <div class="form-grid mb-6">
+              <div class="form-group">
+                <label class="form-label" for="firstName">First Name</label>
+                <input type="text" id="firstName" class="form-input" placeholder="e.g. Alex" value="Alex">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="lastName">Last Name</label>
+                <input type="text" id="lastName" class="form-input" placeholder="e.g. Thompson" value="Thompson">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="dob">Date of Birth</label>
+                <input type="date" id="dob" class="form-input">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="gender">Gender</label>
+                <select id="gender" class="form-select">
+                  <option value="" disabled selected>Select</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+
+            <h3 class="heading-5 mb-4 mt-6 border-bottom pb-4" style="border-bottom: 1px solid var(--color-border); padding-bottom: 1rem;">Contact Information</h3>
+            
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label" for="email">Email Address</label>
+                <input type="email" id="email" class="form-input" placeholder="alex@example.com" value="alex@example.com">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="phone">Phone Number</label>
+                <input type="tel" id="phone" class="form-input" placeholder="+44 7000 000000">
+              </div>
+              <div class="form-group" style="grid-column: 1 / -1;">
+                <label class="form-label" for="address">Postal Address</label>
+                <textarea id="address" class="form-input" rows="3" placeholder="Start typing your address..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-header mb-4 mt-10">
+            <h2 class="heading-3" style="display: inline-block;">Add a little extra "Huh?"</h2>
+            <span class="badge badge--yellow ml-2" style="vertical-align: middle;">Recommended</span>
+          </div>
+
+          <div class="extras-grid">
+            
+            <!-- Extra 1 -->
+            <div class="card p-5 extra-card">
+              <div class="extra-card__header mb-3">
+                <div class="extra-card__icon bg-pink-light text-pink">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                </div>
+                <div class="text-right">
+                  <div class="text-xs text-muted fw-bold text-uppercase">PRICE</div>
+                  <div class="heading-4 text-text">£45<span class="text-xs">.00</span></div>
+                </div>
+              </div>
+              <h4 class="heading-5 mb-2">Premium Travel Cover</h4>
+              <p class="text-sm text-muted mb-4">Fully flexible protection including missed departures and medical cover.</p>
+              <button class="btn btn--outline btn--sm w-100" id="btn-add-cover">Add to Booking</button>
+            </div>
+
+            <!-- Extra 2 -->
+            <div class="card p-5 extra-card extra-card--included border-green">
+              <div class="extra-card__header mb-3">
+                <div class="extra-card__icon bg-green text-white">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                </div>
+                <div class="text-right">
+                  <div class="text-xs text-muted fw-bold text-uppercase">INCLUDED</div>
+                  <div class="heading-4 text-text">£0<span class="text-xs">.00</span></div>
+                </div>
+              </div>
+              <h4 class="heading-5 mb-2">Private Car Transfer</h4>
+              <p class="text-sm text-muted mb-4">Skip the coach and head straight to your hotel in a private luxury car.</p>
+              <button class="btn btn--ghost btn--sm w-100" disabled style="color: var(--color-green); font-weight: 600; background: rgba(26,58,40,0.1); border-color: transparent;">Already Included</button>
+            </div>
+
+          </div>
+
+          <div class="card p-6 mt-8" id="payment-section" style="display: none;">
+            <h3 class="heading-5 mb-4">Payment Details</h3>
+            <div class="form-grid">
+              <div class="form-group" style="grid-column: 1 / -1;">
+                <label class="form-label" for="cardName">Name on Card</label>
+                <input type="text" id="cardName" class="form-input" autocomplete="cc-name">
+              </div>
+              <div class="form-group" style="grid-column: 1 / -1;">
+                <label class="form-label" for="cardNumber">Card Number</label>
+                <input type="text" id="cardNumber" class="form-input" inputmode="numeric" autocomplete="cc-number" maxlength="19" placeholder="1234 5678 9012 3456">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="expiry">Expiry Date</label>
+                <input type="text" id="expiry" class="form-input" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/YY" maxlength="5">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="cvv">Security Code</label>
+                <input type="password" id="cvv" class="form-input" inputmode="numeric" autocomplete="cc-csc" maxlength="4">
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Summary Sidebar -->
+        <aside class="checkout-sidebar">
+          <div class="summary-card card">
+            <div class="summary-card__header">
+              <span class="badge badge--yellow" style="position: absolute; top: 12px; left: 12px; z-index: 2;">HUH? BEST VALUE</span>
+              <img src="{% static 'images/dest-maldives.jpg' %}" alt="Blue Horizon Resort & Spa" class="summary-card__img">
+            </div>
+            
+            <div class="summary-card__body p-5 bg-green text-white">
+              <h3 class="heading-4 mb-2 text-white" id="checkout-hotel-name">Paradise Vista Resort & Spa</h3>
+              <div class="text-sm text-cyan mb-6 d-flex align-items-center gap-1">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                Rhodes, Greece
+              </div>
+
+              <div class="summary-list">
+                <div class="summary-list__item">
+                  <span>Adults (x2)</span>
+                  <span class="fw-bold">£1,198.00</span>
+                </div>
+                <div class="summary-list__item">
+                  <span>Baggage Upgrade</span>
+                  <span class="fw-bold text-yellow">+ £40.00</span>
+                </div>
+                <div class="summary-list__item">
+                  <span>Discount Code</span>
+                  <span class="fw-bold text-cyan">- £50.00</span>
+                </div>
+                <div class="summary-list__item" id="cover-cost-row" style="display: none;">
+                  <span>Premium Travel Cover</span>
+                  <span class="fw-bold">+ £45.00</span>
+                </div>
+              </div>
+
+              <div class="divider" style="background: rgba(255,255,255,0.2);"></div>
+
+                <div class="summary-total d-flex justify-content-between align-items-end mb-6">
+                <div>
+                  <div class="text-xs text-uppercase fw-bold text-cyan mb-1">TOTAL PRICE</div>
+                  <div class="heading-2 text-white" id="total-price">£1,188.00</div>
+                </div>
+                <div class="text-xs text-muted">Incl. £20 booking fee</div>
+              </div>
+
+              <button class="btn btn--primary w-100" id="confirm-booking" type="button" style="font-size: var(--text-lg); padding: 1rem;">Confirm & Continue</button>
+            </div>
+          </div>
+
+          <div class="trust-box bg-white border border-border p-4 rounded-lg mt-4 d-flex align-items-center gap-3">
+            <div class="text-pink">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            </div>
+            <div>
+              <h4 class="text-sm fw-bold">ATOL & ABTA Protected</h4>
+              <p class="text-xs text-muted">Your holiday is 100% financially secure. Shop with absolute confidence.</p>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Simplified Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <a href="{% url 'home' %}" class="footer__brand-logo">
+            <img src="{% static 'logo.jpeg' %}" alt="Travel Huh? Logo" class="site-logo">
+          </a>
+          <p class="footer__brand-tagline">Discover the destinations that make you say "Huh?" — the good kind of disbelief.</p>
+        </div>
+        <div>
+          <h4 class="footer__col-title">About</h4>
+          <ul class="footer__links">
+            <li><a href="#" class="footer__link">Why Travel Huh?</a></li>
+            <li><a href="#" class="footer__link">Contact Us</a></li>
+            <li><a href="#" class="footer__link">Privacy Notice</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer__col-title">Explore</h4>
+          <ul class="footer__links">
+            <li><a href="#" class="footer__link">Holidays</a></li>
+            <li><a href="#" class="footer__link">Destinations</a></li>
+            <li><a href="#" class="footer__link">City Breaks</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer__col-title">Trust</h4>
+          <div class="footer__trust-badges">
+            <span class="footer__trust-badge">ATOL</span>
+            <span class="footer__trust-badge">ABTA</span>
+          </div>
+          <p style="font-size: var(--text-xs); color: rgba(255,255,255,0.5); line-height: 1.5;">© 2026 Travel Huh? All rights reserved. ATOL protected. ABTA member.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{% static 'js/main.js' %}?v=3"></script>
+  <script src="{% static 'js/checkout.js' %}?v=3"></script>
+</body>
+</html>
