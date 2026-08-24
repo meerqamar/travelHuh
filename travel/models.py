@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Hotel(models.Model):
@@ -27,13 +28,31 @@ class Room(models.Model):
         return f'{self.hotel.name} - {self.name}'
 
 
+class Availability(models.Model):
+    room = models.ForeignKey(Room, related_name='availability', on_delete=models.CASCADE)
+    check_in = models.DateField()
+    check_out = models.DateField()
+    rooms_available = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['room', 'check_in', 'check_out'], name='unique_room_availability_period')]
+
+    def __str__(self):
+        return f'{self.room} - {self.check_in} to {self.check_out}'
+
+
 class Booking(models.Model):
-    STATUS_CHOICES = [('pending', 'Pending'), ('confirmed', 'Confirmed')]
+    STATUS_CHOICES = [('pending', 'Pending'), ('confirmed', 'Confirmed'), ('cancelled', 'Cancelled')]
 
     hotel = models.ForeignKey(Hotel, on_delete=models.PROTECT)
     room = models.ForeignKey(Room, on_delete=models.PROTECT)
+    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='bookings')
+    check_in = models.DateField(null=True, blank=True)
+    check_out = models.DateField(null=True, blank=True)
     total_price = models.DecimalField(max_digits=8, decimal_places=2)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='confirmed')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    payment_status = models.CharField(max_length=20, default='unpaid')
+    stripe_session_id = models.CharField(max_length=255, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -52,3 +71,12 @@ class Passenger(models.Model):
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
+
+
+class Shortlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='shortlists')
+    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name='shortlisted_by')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['user', 'hotel'], name='unique_user_hotel_shortlist')]

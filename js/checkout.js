@@ -34,9 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let paymentReady = false;
 
     confirmBooking.addEventListener('click', () => {
-      const fieldsToValidate = paymentReady
-        ? ['cardName', 'cardNumber', 'expiry', 'cvv'].map(id => document.getElementById(id))
-        : requiredFields;
+      const fieldsToValidate = paymentReady ? [] : requiredFields;
       const invalidFields = fieldsToValidate.filter(field => !field.value.trim());
       fieldsToValidate.forEach(field => field.setAttribute('aria-invalid', String(!field.value.trim())));
 
@@ -52,13 +50,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!paymentReady) {
         paymentReady = true;
         paymentSection.style.display = 'block';
-        validationMessage.textContent = 'Traveller details saved. Enter payment details to confirm your booking.';
+        validationMessage.textContent = 'Traveller details saved. Continue to secure payment.';
         validationMessage.style.color = 'var(--color-green-light)';
         checkoutSteps[0]?.classList.remove('active');
         checkoutSteps[1]?.classList.add('active');
         checkoutSteps[2]?.classList.add('active');
         confirmBooking.textContent = `Pay £${basePrice.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-        document.getElementById('cardName')?.focus();
         return;
       }
 
@@ -66,7 +63,6 @@ document.addEventListener('DOMContentLoaded', () => {
       validationMessage.style.color = 'var(--color-green-light)';
 
       const formData = new FormData(checkoutForm);
-      ['cardName', 'cardNumber', 'expiry', 'cvv'].forEach(field => formData.delete(field));
       fetch(checkoutForm.action, {
         method: 'POST',
         body: formData,
@@ -75,9 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json().then(data => ({ ok: response.ok, data })))
         .then(({ ok, data }) => {
           if (!ok) throw new Error(data.error || 'Unable to save booking.');
-          validationMessage.textContent = `${data.message} Reference #${data.booking_id}.`;
-          confirmBooking.textContent = 'Booking Confirmed';
-          confirmBooking.disabled = true;
+          window.location.href = data.checkout_url;
         })
         .catch(error => {
           validationMessage.textContent = error.message;

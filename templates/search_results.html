@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Search Results | Travel Huh?</title>
+  <meta name="csrf-token" content="{{ csrf_token }}">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <link rel="stylesheet" href="{% static 'css/components.css' %}">
 </head>
@@ -18,7 +19,7 @@
       </a>
       <ul class="navbar__links">
         <li><a href="#" class="navbar__link">Travel Info</a></li>
-        <li><a href="#" class="navbar__link">Manage Booking</a></li>
+        <li><a href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'login' %}{% endif %}" class="navbar__link">{% if user.is_authenticated %}My Trips{% else %}Sign In{% endif %}</a></li>
         <li><a href="{% url 'search-results' %}" class="navbar__link navbar__link--shortlist">Shortlist (0)</a></li>
       </ul>
       <div class="navbar__actions">

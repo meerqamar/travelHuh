@@ -42,13 +42,14 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   shortlistButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      const shortlist = getShortlist();
+    button.addEventListener('click', async () => {
       const hotelId = button.dataset.shortlistId;
-      const nextShortlist = shortlist.includes(hotelId)
-        ? shortlist.filter(id => id !== hotelId)
-        : [...shortlist, hotelId];
-
+      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+      const response = await fetch('/shortlist/toggle/', {method: 'POST', headers: {'X-CSRFToken': csrfToken, 'Content-Type': 'application/x-www-form-urlencoded'}, body: new URLSearchParams({hotel_slug: hotelId})});
+      const data = await response.json();
+      if (!response.ok) { button.title = data.error || 'Please sign in to save this hotel.'; return; }
+      const shortlist = getShortlist();
+      const nextShortlist = data.saved ? [...new Set([...shortlist, hotelId])] : shortlist.filter(id => id !== hotelId);
       localStorage.setItem(shortlistStorageKey, JSON.stringify(nextShortlist));
       updateShortlistUI();
     });

@@ -1,6 +1,18 @@
 from django.contrib import admin
 
-from .models import Booking, Hotel, Passenger, Room
+from .models import Availability, Booking, Hotel, Passenger, Room, Shortlist
+
+
+@admin.register(Shortlist)
+class ShortlistAdmin(admin.ModelAdmin):
+    list_display = ('user', 'hotel', 'created_at')
+    search_fields = ('user__username', 'hotel__name')
+
+
+@admin.register(Availability)
+class AvailabilityAdmin(admin.ModelAdmin):
+    list_display = ('room', 'check_in', 'check_out', 'rooms_available')
+    list_filter = ('check_in', 'check_out')
 
 
 @admin.register(Booking)

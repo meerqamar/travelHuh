@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In | Travel Huh?</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components.css' %}">
+</head>
+<body class="bg-light">
+  <main class="container section section--sm container--narrow">
+    <div class="card p-6">
+      <h1 class="heading-3 mb-6">Sign in to Travel Huh?</h1>
+      {% if error %}<p class="text-pink mb-4">{{ error }}</p>{% endif %}
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-group mb-4"><label class="form-label" for="username">Username</label><input class="form-input" id="username" name="username" required></div>
+        <div class="form-group mb-6"><label class="form-label" for="password">Password</label><input class="form-input" id="password" name="password" type="password" required></div>
+        <button class="btn btn--primary w-100" type="submit">Sign In</button>
+      </form>
+      <p class="text-muted mt-4">New here? <a class="text-pink" href="{% url 'register' %}">Create an account</a></p>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Travel Huh? Account</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components.css' %}">
+</head>
+<body class="bg-light">
+  <main class="container section section--sm container--narrow">
+    <div class="card p-6 text-center">
+      <h1 class="heading-3 mb-4">{{ message }}</h1>
+      {% if user.is_authenticated %}<p class="text-muted mb-6">Signed in as {{ user.username }}.</p><a class="btn btn--primary" href="{% url 'dashboard' %}">View My Trips</a>{% else %}<a class="btn btn--primary" href="{% url 'login' %}">Sign in</a>{% endif %}
+    </div>
+  </main>
+</body>
+</html>
