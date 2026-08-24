@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <title>Travel Huh? | You're going where now?</title>
+  <meta name="description" content="Discover destinations that make you say 'Huh?' – the good kind of disbelief.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header class="header-main header-main--floating">
+    <div class="header-main__top">
+      <div class="header-main__inner">
+        <a href="index.html" class="header-main__logo">
+          <img src="assets/logo.jpeg" alt="Travel Huh? Logo" id="nav-logo" class="site-logo">
+        </a>
+        
+        <ul class="header-main__nav">
+          <li><a href="#">Vacations</a></li>
+          <li><a href="#">Deals</a></li>
+          <li><a href="#">Places</a></li>
+          <li><a href="#">Weekends</a></li>
+          <li><a href="#">Extras</a></li>
+        </ul>
+
+        <div class="header-main__utils">
+          <a href="#" class="header-main__link header-main__link--pill">Travel Info</a>
+          <a href="#" class="header-main__link header-main__link--pill">Manage Booking</a>
+          <a href="search-results.html" class="header-main__link header-main__link--pill">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            Shortlist
+          </a>
+        </div>
+
+        <button class="navbar__hamburger" id="mobile-menu-btn" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="header-main__bottom">
+      <div class="header-main__inner">
+        We're here to help 24/7 via our on-trip chat.
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#" class="mobile-menu__link text-pink">Vacations</a>
+    <a href="#" class="mobile-menu__link text-pink">Deals</a>
+    <a href="#" class="mobile-menu__link text-pink">Places</a>
+    <a href="#" class="mobile-menu__link text-pink">Weekends</a>
+    <a href="#" class="mobile-menu__link text-pink">Extras</a>
+    <hr style="border: 0; border-top: 1px solid var(--color-border); margin: var(--space-2) 0;">
+    <a href="#" class="mobile-menu__link">Travel Info</a>
+    <a href="#" class="mobile-menu__link">Manage Booking</a>
+    <a href="search-results.html" class="mobile-menu__link">Shortlist (0)</a>
+  </div>
+  <main class="page-wrapper page-wrapper--hero">
+    
+    <!-- Hero Section -->
+    <section class="hero hero--split">
+      <div class="hero__bg">
+        <img src="assets/images/hero-option-4.png" alt="Tropical paradise">
+        <div class="hero__overlay"></div>
+      </div>
+      
+      <div class="container hero__inner animate-fadeInUp">
+        <div class="hero__text-col">
+          <h1 class="hero__title hero__title--right">You're going <span class="highlight">where</span> now?</h1>
+          <p class="hero__subtitle hero__subtitle--right">Discover destinations that make you say "Huh?" — the good kind of disbelief.</p>
+        </div>
+
+        <div class="hero__widget-col">
+          <div class="search-widget-card">
+            <div class="search-widget-tabs">
+              <button class="search-tab active" id="tab-holidays">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="19.36" x2="19.78" y2="18.36"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                Holidays
+              </button>
+              <button class="search-tab" id="tab-hotels">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                Hotels
+              </button>
+            </div>
+            
+            <div class="search-widget-body">
+              <!-- HOLIDAYS FORM -->
+              <div id="form-holidays" class="search-form-wrapper">
+                <form action="#" method="GET">
+                  <div class="search-input-row search-input-row--split">
+                    <div class="search-field-half">
+                      <div class="search-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 0-18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></div>
+                      <div class="search-field">
+                        <label for="destination">ANY DESTINATION</label>
+                        <input type="text" id="destination" placeholder="Where to?" name="destination">
+                      </div>
+                    </div>
+                    <div class="search-field-half">
+                      <div class="search-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></div>
+                      <div class="search-field">
+                        <label for="departure">ANY UK AIRPORT</label>
+                        <input type="text" id="departure" placeholder="Flying from" name="departure">
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="search-input-row search-input-row--split">
+                    <div class="search-field-half">
+                      <div class="search-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></div>
+                      <div class="search-field">
+                        <label for="duration">7 NIGHTS</label>
+                        <select id="duration" name="duration">
+                          <option value="7">7 Nights</option>
+                          <option value="10">10 Nights</option>
+                          <option value="14">14 Nights</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="search-field-half">
+                      <div class="search-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></div>
+                      <div class="search-field">
+                        <label for="dates">SELECT DATE</label>
+                        <input type="text" id="dates" placeholder="When?" name="dates">
+                      </div>
+                    </div>
+                  </div>
+                  <button type="submit" class="btn btn--pink search-submit-btn">Search Holidays</button>
+                </form>
+              </div>
+
+              <!-- HOTELS FORM -->
+              <div id="form-hotels" class="search-form-wrapper" style="display: none;">
+                <form action="#" method="GET">
+                  <div class="search-input-row search-input-row--split">
+                    <div class="search-field-half">
+                      <div class="search-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 0-18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></div>
+                      <div class="search-field">
+                        <label for="hotel-destination">ANY HOTEL OR DESTINATION</label>
+                        <input type="text" id="hotel-destination" placeholder="Where to?" name="hotel-destination">
+                      </div>
+                    </div>
+                    <div class="search-field-half">
+                      <div class="search-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></div>
+                      <div class="search-field">
+                        <label for="hotel-dates">CHECK-IN & CHECK-OUT</label>
+                        <input type="text" id="hotel-dates" placeholder="When?" name="hotel-dates">
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="search-input-row">
+                    <div class="search-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div>
+                    <div class="search-field">
+                      <label for="hotel-guests">GUESTS & ROOMS</label>
+                      <input type="text" id="hotel-guests" placeholder="2 Adults, 1 Room" name="hotel-guests">
+                    </div>
+                  </div>
+                  <button type="submit" class="btn btn--pink search-submit-btn">Search Hotels</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- USP Strip -->
+    <div class="usp-strip">
+      <div class="container">
+        <div class="usp-strip__inner">
+          <div class="usp-item">
+            <div class="usp-item__icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            </div>
+            ATOL Protected
+          </div>
+          <div class="usp-item">
+            <div class="usp-item__icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+            24/7 Support
+          </div>
+          <div class="usp-item">
+            <div class="usp-item__icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+            </div>
+            Price Match
+          </div>
+          <div class="usp-item">
+            <div class="usp-item__icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            </div>
+            No Hidden Fees
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Deals Carousel Section -->
+    <section class="section bg-light">
+      <div class="container">
+        <div class="section-header section-header--center reveal">
+          <span class="section-header__label">Hot Deals</span>
+          <h2 class="section-header__title">Fly off in the next 14 days</h2>
+          <p class="section-header__subtitle">Grab your passport. These last-minute getaways won't hang around for long.</p>
+        </div>
+
+        <div class="carousel-wrapper reveal reveal--delay-1">
+          <div class="carousel-track" id="deals-track">
+            
+            <!-- Deal 1 -->
+            <div class="deal-card">
+              <div class="deal-card__badge badge badge--yellow">Save £150pp</div>
+              <button class="deal-card__wishlist" data-shortlist-id="paradise-vista" aria-label="Add to shortlist">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+              </button>
+              <div class="deal-card__image">
+                <img src="assets/images/dest-maldives.jpg" alt="Maldives">
+              </div>
+              <div class="deal-card__body">
+                <div class="deal-card__destination">Maldives, Indian Ocean</div>
+                <h3 class="deal-card__name">Paradise Vista Resort & Spa</h3>
+                <div class="deal-card__features">
+                  <span class="badge badge--outline">All Inclusive</span>
+                  <span class="badge badge--outline">7 Nights</span>
+                </div>
+                <div class="deal-card__price-row">
+                  <div class="deal-card__price-label">Includes flights</div>
+                  <div class="deal-card__price">£1,376 <span class="deal-card__price-pp">pp</span></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Deal 2 -->
+            <div class="deal-card">
+              <div class="deal-card__badge badge badge--yellow">Save £85pp</div>
+              <button class="deal-card__wishlist" data-shortlist-id="sapphire-oasis" aria-label="Add to shortlist">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+              </button>
+              <div class="deal-card__image">
+                <img src="assets/images/dest-santorini.jpg" alt="Santorini">
+              </div>
+              <div class="deal-card__body">
+                <div class="deal-card__destination">Santorini, Greece</div>
+                <h3 class="deal-card__name">The Sapphire Oasis Resort</h3>
+                <div class="deal-card__features">
+                  <span class="badge badge--outline">Half Board</span>
+                  <span class="badge badge--outline">5 Nights</span>
+                </div>
+                <div class="deal-card__price-row">
+                  <div class="deal-card__price-label">Includes flights</div>
+                  <div class="deal-card__price">£849 <span class="deal-card__price-pp">pp</span></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Promo Card -->
+            <div class="deal-card" style="background: var(--color-pink); color: var(--color-white); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: var(--space-6);">
+              <img src="assets/logo-white.svg" alt="" style="height: 40px; margin-bottom: var(--space-4);">
+              <h3 class="heading-4 text-white mb-2">We've got more...</h3>
+              <p style="color: rgba(255,255,255,0.8); font-size: var(--text-sm); margin-bottom: var(--space-6);">Explore hundreds of last-minute escapes ready for you.</p>
+              <a href="search-results.html" class="btn btn--outline-white">See all deals</a>
+            </div>
+
+          </div>
+        </div>
+        
+        <div class="carousel-nav" style="justify-content: center; margin-top: var(--space-6);">
+          <button class="carousel-btn" id="deals-prev" aria-label="Previous deal" disabled>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </button>
+          <button class="carousel-btn" id="deals-next" aria-label="Next deal">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Trending Destinations -->
+    <section class="section">
+      <div class="container">
+        <div class="section-header section-header--center reveal">
+          <h2 class="section-header__title">Trending Destinations</h2>
+          <p class="section-header__subtitle">Places everyone's talking about right now. Don't let FOMO win.</p>
+        </div>
+
+        <div class="trending-grid reveal reveal--delay-1">
+          <a href="search-results.html?dest=rhodes" class="trending-card trending-card--large">
+            <img src="assets/images/dest-santorini.jpg" alt="Rhodes" class="trending-card__img">
+            <div class="trending-card__overlay">
+              <h3 class="trending-card__title">Rhodes</h3>
+            </div>
+          </a>
+          <a href="search-results.html?dest=tenerife" class="trending-card">
+            <img src="assets/images/dest-tenerife.jpg" alt="Tenerife" class="trending-card__img">
+            <div class="trending-card__overlay">
+              <h3 class="trending-card__title">Tenerife</h3>
+            </div>
+          </a>
+          <a href="search-results.html?dest=maldives" class="trending-card">
+            <img src="assets/images/dest-maldives.jpg" alt="Maldives" class="trending-card__img">
+            <div class="trending-card__overlay">
+              <h3 class="trending-card__title">Maldives</h3>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Us Split Section -->
+    <section class="section bg-light">
+      <div class="container">
+        <div class="split-content">
+          <div class="split-content__text reveal">
+            <span class="section-header__label">The Travel Huh? Difference</span>
+            <h2 class="heading-2" style="margin-bottom: var(--space-4);">We're not just another travel site.</h2>
+            <p class="text-muted" style="font-size: var(--text-lg);">When you book with us, you're getting hand-picked hotels, unbeatable prices, and support when you need it.</p>
+            
+            <ul class="split-content__list">
+              <li>
+                <div class="split-content__icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                </div>
+                <div>
+                  <h4>100% Protected</h4>
+                  <p>Your money is safe with ATOL and ABTA protection.</p>
+                </div>
+              </li>
+              <li>
+                <div class="split-content__icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                </div>
+                <div>
+                  <h4>Price Match Guarantee</h4>
+                  <p>Find it cheaper somewhere else? We'll match it.</p>
+                </div>
+              </li>
+              <li>
+                <div class="split-content__icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                </div>
+                <div>
+                  <h4>24/7 Travel Support</h4>
+                  <p>We're here for you before, during, and after your trip.</p>
+                </div>
+              </li>
+            </ul>
+
+            <a href="#" class="btn btn--primary">Read our story</a>
+          </div>
+          <div class="split-content__image reveal reveal--delay-2">
+            <img src="assets/images/blog-1.jpg" alt="Traveler enjoying the view">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Blog / Insiders -->
+    <section class="section">
+      <div class="container">
+        <div class="section-header reveal">
+          <h2 class="section-header__title">Travel Huh? Insiders</h2>
+          <p class="section-header__subtitle">Get the inside scoop on the best destinations from our travel experts.</p>
+        </div>
+
+        <div class="blog-row reveal reveal--delay-1">
+          <a href="#" class="blog-card">
+            <img src="assets/images/blog-2.jpg" alt="Couple walking" class="blog-card__img">
+            <div class="blog-card__content">
+              <span class="blog-card__tag">Couples</span>
+              <h3 class="blog-card__title">The Most Romantic Escapes for 2026</h3>
+            </div>
+          </a>
+          <a href="#" class="blog-card">
+            <img src="assets/images/hotel-pool.jpg" alt="Hotel pool" class="blog-card__img">
+            <div class="blog-card__content">
+              <span class="blog-card__tag">Luxury</span>
+              <h3 class="blog-card__title">5 Pools You Need to Swim in Before You Die</h3>
+            </div>
+          </a>
+          <a href="#" class="blog-card">
+            <img src="assets/images/blog-3.jpg" alt="Drone view of resort" class="blog-card__img">
+            <div class="blog-card__content">
+              <span class="blog-card__tag">Guides</span>
+              <h3 class="blog-card__title">First Timer's Guide to the Maldives</h3>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      
+      <!-- Newsletter Section inside footer area -->
+      <div class="newsletter-section" style="margin-bottom: var(--space-16); margin-top: calc(var(--space-8) * -1);">
+        <div class="newsletter-section__icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+        </div>
+        <div class="newsletter-section__content">
+          <span class="newsletter-section__label">Promo</span>
+          <h3 class="newsletter-section__title">Join the Insiders</h3>
+          <p class="newsletter-section__subtitle">Get exclusive "Huh?" moments delivered to your inbox and save up to £500 on your next escape.</p>
+          <form class="newsletter-form">
+            <input type="email" placeholder="Enter your email" class="newsletter-input" required>
+            <button type="submit" class="btn btn--primary">Sign Up</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <a href="index.html" class="footer__brand-logo">
+            <img src="assets/logo.jpeg" alt="Travel Huh? Logo" class="site-logo">
+          </a>
+          <p class="footer__brand-tagline">You're going where now? Discover destinations that make you double-take. High quality, bold aesthetics, unforgettable memories.</p>
+          <div class="footer__socials">
+            <a href="#" class="footer__social-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+            <a href="#" class="footer__social-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>
+            <a href="#" class="footer__social-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg></a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer__col-title">About</h4>
+          <ul class="footer__links">
+            <li><a href="#" class="footer__link">Why Travel Huh?</a></li>
+            <li><a href="#" class="footer__link">Contact Us</a></li>
+            <li><a href="#" class="footer__link">App</a></li>
+            <li><a href="#" class="footer__link">Privacy Notice</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer__col-title">Sitemap</h4>
+          <ul class="footer__links">
+            <li><a href="#" class="footer__link">Holidays</a></li>
+            <li><a href="#" class="footer__link">Deals</a></li>
+            <li><a href="#" class="footer__link">Destinations</a></li>
+            <li><a href="#" class="footer__link">City Breaks</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer__col-title">Trust</h4>
+          <div class="footer__trust-badges">
+            <span class="footer__trust-badge">ATOL</span>
+            <span class="footer__trust-badge">ABTA</span>
+          </div>
+          <p style="font-size: var(--text-xs); color: var(--color-white); line-height: 1.5;">© 2026 Travel Huh? All rights reserved. ATOL protected. ABTA member. Registered in the UK.</p>
+        </div>
+      </div>
+
+      <div class="footer__bottom">
+        <div class="footer__copyright">
+          Designed By Malleable
+        </div>
+        <div class="footer__bottom-links">
+          <a href="#" class="footer__bottom-link">Terms & Conditions</a>
+          <a href="#" class="footer__bottom-link">Cookie Policy</a>
+          <a href="#" class="footer__bottom-link">Accessibility</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js?v=2"></script>
+</body>
+</html>

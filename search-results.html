@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search Results | Travel Huh?</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body class="bg-light">
+
+  <!-- Navigation -->
+  <nav class="navbar" id="navbar">
+    <div class="navbar__inner">
+      <a href="index.html" class="navbar__logo">
+        <img src="assets/logo.jpeg" alt="Travel Huh? Logo" class="site-logo">
+      </a>
+      <ul class="navbar__links">
+        <li><a href="#" class="navbar__link">Travel Info</a></li>
+        <li><a href="#" class="navbar__link">Manage Booking</a></li>
+        <li><a href="search-results.html" class="navbar__link navbar__link--shortlist">Shortlist (0)</a></li>
+      </ul>
+      <div class="navbar__actions">
+        <button class="navbar__action-btn" aria-label="Search">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </button>
+        <button class="navbar__hamburger" id="mobile-menu-btn" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#" class="mobile-menu__link">Travel Info</a>
+    <a href="#" class="mobile-menu__link">Manage Booking</a>
+    <a href="search-results.html" class="mobile-menu__link text-pink">Shortlist (0)</a>
+  </div>
+
+  <main class="page-wrapper" style="padding-bottom: 80px;">
+    
+    <div class="container section section--sm">
+      <div class="section-header">
+        <h1 class="heading-2 mb-2">Search Results</h1>
+        <p class="text-muted">Finding the best "Huh?" moments for your next trip.</p>
+      </div>
+
+      <div class="search-layout">
+        <!-- Sidebar Filters -->
+        <aside class="search-filters">
+          <div class="filters-header">
+            <h3 class="heading-5">Filters</h3>
+            <button class="btn btn--ghost btn--sm" id="clear-filters">Clear All</button>
+          </div>
+          
+          <div class="filter-section">
+            <h4 class="filter-title">Price Range</h4>
+            <div class="filter-price">
+              <input type="range" class="range-slider" min="0" max="2000" value="1500" id="priceRange">
+              <div class="filter-price-labels">
+                <span>£0</span>
+                <span id="priceValue">£1500+</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-section">
+            <h4 class="filter-title">Star Rating</h4>
+            <div class="checkbox-group">
+              <label class="checkbox-item">
+                <input type="checkbox" checked>
+                <span class="stars">★★★★★</span> 5 Stars
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox">
+                <span class="stars">★★★★☆</span> 4 Stars
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox">
+                <span class="stars">★★★☆☆</span> 3 Stars
+              </label>
+            </div>
+          </div>
+
+          <div class="filter-section">
+            <h4 class="filter-title">Board Basis</h4>
+            <div class="radio-group">
+              <label class="radio-item">
+                <input type="radio" name="board" checked> All Inclusive
+              </label>
+              <label class="radio-item">
+                <input type="radio" name="board"> Half Board
+              </label>
+              <label class="radio-item">
+                <input type="radio" name="board"> Self Catering
+              </label>
+            </div>
+          </div>
+
+          <div class="filter-section">
+            <h4 class="filter-title">Facilities</h4>
+            <div class="checkbox-group">
+              <label class="checkbox-item"><input type="checkbox" checked> Free WiFi</label>
+              <label class="checkbox-item"><input type="checkbox"> Pool</label>
+              <label class="checkbox-item"><input type="checkbox"> Spa</label>
+              <label class="checkbox-item"><input type="checkbox"> Gym</label>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Results List -->
+        <div class="search-results">
+          
+          <!-- Result Item 1 -->
+          <div class="result-card">
+            <div class="result-card__image-container">
+              <span class="badge badge--yellow result-card__badge">Huh? 😁</span>
+              <img src="assets/images/dest-santorini.jpg" alt="The Sapphire Oasis Resort" class="result-card__image">
+              <button class="result-card__wishlist" data-shortlist-id="sapphire-oasis" aria-label="Add to shortlist">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+              </button>
+            </div>
+            
+            <div class="result-card__content">
+              <div class="result-card__header">
+                <div>
+                  <h3 class="result-card__title">The Sapphire Oasis Resort</h3>
+                  <div class="result-card__location">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    Paphos, Cyprus
+                  </div>
+                </div>
+                <div class="rating-badge">
+                  <span class="rating-badge__score">4.8</span>
+                  <span class="rating-badge__label">Excellent (4.8/5)</span>
+                </div>
+              </div>
+
+              <div class="result-card__tags">
+                <span class="badge badge--pink-light">Free Child Place</span>
+                <span class="badge badge--cyan">All Inclusive</span>
+                <span class="badge badge--outline">High Speed WiFi</span>
+              </div>
+
+              <div class="result-card__footer">
+                <div class="result-card__price-info">
+                  <div class="text-xs text-muted mb-1">Total price for 7 nights</div>
+                  <div class="result-card__price">£849 <span class="text-sm fw-medium text-muted">per person</span></div>
+                </div>
+                <a href="hotel-detail.html" class="btn btn--yellow">View Deal <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Result Item 2 -->
+          <div class="result-card">
+            <div class="result-card__image-container">
+              <span class="badge badge--green result-card__badge" style="background-color: var(--color-green-mid);">Trending</span>
+              <img src="assets/images/dest-tenerife.jpg" alt="Windmill Bay Boutique Hotel" class="result-card__image">
+              <button class="result-card__wishlist" data-shortlist-id="windmill-bay" aria-label="Add to shortlist">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+              </button>
+            </div>
+            
+            <div class="result-card__content">
+              <div class="result-card__header">
+                <div>
+                  <h3 class="result-card__title">Windmill Bay Boutique Hotel</h3>
+                  <div class="result-card__location">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    Rhodes, Greece
+                  </div>
+                </div>
+                <div class="rating-badge">
+                  <span class="rating-badge__score">4.9</span>
+                  <span class="rating-badge__label">Exceptional (4.9/5)</span>
+                </div>
+              </div>
+
+              <div class="result-card__tags">
+                <span class="badge badge--pink-light">Couple's Choice</span>
+                <span class="badge badge--cyan" style="background-color: var(--color-cyan-dark);">Half Board</span>
+              </div>
+
+              <div class="result-card__footer">
+                <div class="result-card__price-info">
+                  <div class="text-xs text-muted mb-1">Total price for 7 nights</div>
+                  <div class="result-card__price">£620 <span class="text-sm fw-medium text-muted">per person</span></div>
+                </div>
+                <a href="hotel-detail.html" class="btn btn--yellow">View Deal <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Sticky Bottom Search Bar -->
+  <div class="sticky-bar">
+    <div class="container sticky-bar__inner">
+      <div class="sticky-bar__info">
+        <div class="sticky-bar__item">
+          <span class="text-xs fw-bold" style="color: var(--color-cyan);">DESTINATION</span>
+          <span class="fw-medium text-white">Mediterranean Hotspots</span>
+        </div>
+        <div class="sticky-bar__item">
+          <span class="text-xs fw-bold" style="color: var(--color-cyan);">DATES</span>
+          <span class="fw-medium text-white">July 15 - July 22</span>
+        </div>
+        <div class="sticky-bar__item">
+          <span class="text-xs fw-bold" style="color: var(--color-cyan);">PASSENGERS</span>
+          <span class="fw-medium text-white">2 Adults, 1 Child</span>
+        </div>
+      </div>
+      <div class="sticky-bar__actions">
+        <button class="btn btn--outline-white btn--sm">Refine</button>
+        <button class="btn btn--primary btn--sm">Update Search</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <a href="index.html" class="footer__brand-logo">
+            <img src="assets/logo.jpeg" alt="Travel Huh? Logo" class="site-logo">
+          </a>
+          <p class="footer__brand-tagline">You're going where now? Discover destinations that make you double-take. High quality, bold aesthetics, unforgettable memories.</p>
+        </div>
+
+        <div>
+          <h4 class="footer__col-title">About</h4>
+          <ul class="footer__links">
+            <li><a href="#" class="footer__link">Why Travel Huh?</a></li>
+            <li><a href="#" class="footer__link">Contact Us</a></li>
+            <li><a href="#" class="footer__link">Privacy Notice</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer__col-title">Sitemap</h4>
+          <ul class="footer__links">
+            <li><a href="#" class="footer__link">Holidays</a></li>
+            <li><a href="#" class="footer__link">Deals</a></li>
+            <li><a href="#" class="footer__link">Destinations</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer__col-title">Trust</h4>
+          <div class="footer__trust-badges">
+            <span class="footer__trust-badge">ATOL</span>
+            <span class="footer__trust-badge">ABTA</span>
+          </div>
+          <p style="font-size: var(--text-xs); color: rgba(255,255,255,0.5); line-height: 1.5;">© 2026 Travel Huh? All rights reserved.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/search.js"></script>
+</body>
+</html>
