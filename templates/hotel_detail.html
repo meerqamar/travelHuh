@@ -184,7 +184,7 @@
                     <span class="text-muted text-xs">+14 Days</span>
                     <span class="heading-4 text-pink">£{{ room.price_per_person|floatformat:0 }}<span class="text-sm">pp</span></span>
                   </div>
-                  <button class="room-card__select{% if forloop.last %} active{% endif %}" data-room-name="{{ room.name }}" data-board="{{ room.board_basis }}" data-price-pp="{{ room.price_per_person|floatformat:0 }}">
+                  <button class="room-card__select{% if forloop.last %} active{% endif %}" data-room-id="{{ room.id }}" data-room-name="{{ room.name }}" data-board="{{ room.board_basis }}" data-price-pp="{{ room.price_per_person|floatformat:0 }}">
                     <span class="room-card__radio{% if forloop.last %} active{% endif %}"></span>
                     {% if forloop.last %}SELECTED{% else %}SELECT{% endif %}
                   </button>

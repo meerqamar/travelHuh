@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const confirmBooking = document.getElementById('confirm-booking');
   const checkoutSteps = document.querySelectorAll('.checkout-stepper .step');
   const paymentSection = document.getElementById('payment-section');
+  const checkoutForm = document.getElementById('checkout-form');
   const booking = JSON.parse(localStorage.getItem('travelHuhBooking') || 'null');
   
   let basePrice = booking?.total || 1188.00;
@@ -17,6 +18,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (booking && checkoutHotelName) {
     checkoutHotelName.textContent = `${booking.roomName} - ${booking.board}`;
     totalPriceEl.textContent = `£${basePrice.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+  }
+  if (booking) {
+    document.getElementById('checkout-room-id').value = booking.roomId || '';
+    document.getElementById('checkout-total-price').value = basePrice.toFixed(2);
   }
 
   if (confirmBooking) {
@@ -59,8 +64,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
       validationMessage.textContent = 'Booking confirmed. Your travel details have been saved.';
       validationMessage.style.color = 'var(--color-green-light)';
-      confirmBooking.textContent = 'Booking Confirmed';
-      confirmBooking.disabled = true;
+
+      const formData = new FormData(checkoutForm);
+      ['cardName', 'cardNumber', 'expiry', 'cvv'].forEach(field => formData.delete(field));
+      fetch(checkoutForm.action, {
+        method: 'POST',
+        body: formData,
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      })
+        .then(response => response.json().then(data => ({ ok: response.ok, data })))
+        .then(({ ok, data }) => {
+          if (!ok) throw new Error(data.error || 'Unable to save booking.');
+          validationMessage.textContent = `${data.message} Reference #${data.booking_id}.`;
+          confirmBooking.textContent = 'Booking Confirmed';
+          confirmBooking.disabled = true;
+        })
+        .catch(error => {
+          validationMessage.textContent = error.message;
+          validationMessage.style.color = 'var(--color-pink)';
+        });
     });
   }
 

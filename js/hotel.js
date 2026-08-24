@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const updateBookingSummary = (button) => {
     const pricePerPerson = Number(button.dataset.pricePp);
     const booking = {
+      roomId: button.dataset.roomId,
       roomName: button.dataset.roomName,
       board: button.dataset.board,
       pricePerPerson,

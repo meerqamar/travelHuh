@@ -1,6 +1,19 @@
 from django.contrib import admin
 
-from .models import Hotel, Room
+from .models import Booking, Hotel, Passenger, Room
+
+
+@admin.register(Booking)
+class BookingAdmin(admin.ModelAdmin):
+    list_display = ('id', 'hotel', 'room', 'total_price', 'status', 'created_at')
+    list_filter = ('status', 'hotel')
+    search_fields = ('hotel__name', 'room__name')
+
+
+@admin.register(Passenger)
+class PassengerAdmin(admin.ModelAdmin):
+    list_display = ('first_name', 'last_name', 'email', 'booking')
+    search_fields = ('first_name', 'last_name', 'email')
 
 
 @admin.register(Hotel)
