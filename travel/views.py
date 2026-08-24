@@ -16,7 +16,8 @@ def search_results(request):
 
 
 def hotel_detail(request):
-    hotel = Hotel.objects.prefetch_related('rooms').filter(slug='paradise-vista').first()
+    slug = request.GET.get('hotel', 'paradise-vista')
+    hotel = Hotel.objects.prefetch_related('rooms').filter(slug=slug).first()
     return render(request, 'hotel_detail.html', {'hotel': hotel})
 
 

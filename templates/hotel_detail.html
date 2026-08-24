@@ -167,59 +167,30 @@
             </div>
 
             <div class="room-cards">
-              <!-- Room 1 -->
-              <div class="room-card card">
+              {% for room in hotel.rooms.all %}
+              <div class="room-card card{% if forloop.last %} selected{% endif %}">
                 <div class="room-card__img">
-                  <img src="{% static 'images/hotel-room.jpg' %}" alt="Standard Twin Room">
+                  <img src="{% static room.image %}" alt="{{ room.name }}">
                 </div>
                 <div class="room-card__info">
-                  <h4 class="heading-5 mb-2">Standard Twin Room with Balcony</h4>
+                  <h4 class="heading-5 mb-2">{{ room.name }}</h4>
                   <ul class="room-card__features mb-3">
-                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pink"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Sleeps up to 2</li>
-                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pink"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Sea view guaranteed</li>
-                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pink"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Air conditioning & free Wi-Fi</li>
+                    {% for feature in room.features %}<li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pink"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> {{ feature }}</li>{% endfor %}
                   </ul>
-                  <div class="badge badge--outline mb-2">Half Board <small>Breakfast & Dinner included</small></div>
+                  <div class="badge badge--outline mb-2">{{ room.board_basis }}</div>
                 </div>
-                <div class="room-card__action">
+                <div class="room-card__action{% if forloop.last %} bg-pink-light{% endif %}">
                   <div class="room-card__price-box">
                     <span class="text-muted text-xs">+14 Days</span>
-                    <span class="heading-4 text-pink">£729<span class="text-sm">pp</span></span>
+                    <span class="heading-4 text-pink">£{{ room.price_per_person|floatformat:0 }}<span class="text-sm">pp</span></span>
                   </div>
-                  <button class="room-card__select" data-room-name="Standard Twin Room with Balcony" data-board="Half Board" data-price-pp="729">
-                    <span class="room-card__radio"></span>
-                    SELECT
+                  <button class="room-card__select{% if forloop.last %} active{% endif %}" data-room-name="{{ room.name }}" data-board="{{ room.board_basis }}" data-price-pp="{{ room.price_per_person|floatformat:0 }}">
+                    <span class="room-card__radio{% if forloop.last %} active{% endif %}"></span>
+                    {% if forloop.last %}SELECTED{% else %}SELECT{% endif %}
                   </button>
                 </div>
               </div>
-
-              <!-- Room 2 -->
-              <div class="room-card card selected">
-                <div class="room-card__img">
-                  <img src="{% static 'images/hotel-pool.jpg' %}" alt="Swim-up Double Room">
-                  <span class="badge badge--pink" style="position: absolute; top: 10px; left: 10px;">Popular</span>
-                </div>
-                <div class="room-card__info">
-                  <h4 class="heading-5 mb-2">Swim-up Double Room with Terrace</h4>
-                  <ul class="room-card__features mb-3">
-                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pink"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Private pool access</li>
-                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pink"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Complimentary welcome drink</li>
-                    <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pink"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Premium minibar included</li>
-                  </ul>
-                  <div class="badge badge--cyan mb-2">All Inclusive <small>All meals, snacks & drinks</small></div>
-                </div>
-                <div class="room-card__action bg-pink-light">
-                  <div class="room-card__price-box">
-                    <span class="text-muted text-xs">+14 Days</span>
-                    <span class="heading-4 text-pink">£989<span class="text-sm">pp</span></span>
-                  </div>
-                  <button class="room-card__select active" data-room-name="Swim-up Double Room with Terrace" data-board="All Inclusive" data-price-pp="989">
-                    <span class="room-card__radio active"></span>
-                    SELECTED
-                  </button>
-                </div>
-              </div>
-
+              {% endfor %}
             </div>
           </div>
 

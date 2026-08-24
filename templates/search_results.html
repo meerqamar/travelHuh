@@ -48,46 +48,6 @@
       </div>
 
       <div class="search-layout">
-        <!-- Sidebar Filters -->
-        <aside class="search-filters">
-          <div class="filters-header">
-            <h3 class="heading-5">Filters</h3>
-            <button class="btn btn--ghost btn--sm" id="clear-filters">Clear All</button>
-          </div>
-          
-          <div class="filter-section">
-            <h4 class="filter-title">Price Range</h4>
-            <div class="filter-price">
-              <input type="range" class="range-slider" min="0" max="2000" value="1500" id="priceRange">
-              <div class="filter-price-labels">
-                <span>£0</span>
-                <span id="priceValue">£1500+</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="filter-section">
-            <h4 class="filter-title">Star Rating</h4>
-            <div class="checkbox-group">
-              <label class="checkbox-item">
-                <input type="checkbox" checked>
-                <span class="stars">★★★★★</span> 5 Stars
-              </label>
-              <label class="checkbox-item">
-                <input type="checkbox">
-                <span class="stars">★★★★☆</span> 4 Stars
-              </label>
-              <label class="checkbox-item">
-                <input type="checkbox">
-                <span class="stars">★★★☆☆</span> 3 Stars
-              </label>
-            </div>
-          </div>
-
-          <div class="filter-section">
-            <h4 class="filter-title">Board Basis</h4>
-            <div class="radio-group">
-              <label class="radio-item">
                 <input type="radio" name="board" checked> All Inclusive
               </label>
               <label class="radio-item">
@@ -112,13 +72,13 @@
 
         <!-- Results List -->
         <div class="search-results">
-          
+          {% for hotel in hotels %}
           <!-- Result Item 1 -->
           <div class="result-card">
             <div class="result-card__image-container">
               <span class="badge badge--yellow result-card__badge">Huh? 😁</span>
-              <img src="{% static 'images/dest-santorini.jpg' %}" alt="The Sapphire Oasis Resort" class="result-card__image">
-              <button class="result-card__wishlist" data-shortlist-id="sapphire-oasis" aria-label="Add to shortlist">
+              <img src="{% static hotel.image %}" alt="{{ hotel.name }}" class="result-card__image">
+              <button class="result-card__wishlist" data-shortlist-id="{{ hotel.slug }}" aria-label="Add to shortlist">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
               </button>
             </div>
@@ -126,36 +86,35 @@
             <div class="result-card__content">
               <div class="result-card__header">
                 <div>
-                  <h3 class="result-card__title">The Sapphire Oasis Resort</h3>
+                  <h3 class="result-card__title">{{ hotel.name }}</h3>
                   <div class="result-card__location">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                    Paphos, Cyprus
+                    {{ hotel.location }}
                   </div>
                 </div>
                 <div class="rating-badge">
-                  <span class="rating-badge__score">4.8</span>
-                  <span class="rating-badge__label">Excellent (4.8/5)</span>
+                  <span class="rating-badge__score">{{ hotel.rating }}</span>
+                  <span class="rating-badge__label">Excellent ({{ hotel.rating }}/5)</span>
                 </div>
               </div>
 
               <div class="result-card__tags">
-                <span class="badge badge--pink-light">Free Child Place</span>
-                <span class="badge badge--cyan">All Inclusive</span>
-                <span class="badge badge--outline">High Speed WiFi</span>
+                <span class="badge badge--cyan">{{ hotel.board_basis }}</span>
+                {% for facility in hotel.facilities %}<span class="badge badge--outline">{{ facility }}</span>{% endfor %}
               </div>
 
               <div class="result-card__footer">
                 <div class="result-card__price-info">
                   <div class="text-xs text-muted mb-1">Total price for 7 nights</div>
-                  <div class="result-card__price">£849 <span class="text-sm fw-medium text-muted">per person</span></div>
+                  <div class="result-card__price">£{{ hotel.price_per_person|floatformat:0 }} <span class="text-sm fw-medium text-muted">per person</span></div>
                 </div>
-                <a href="{% url 'hotel-detail' %}" class="btn btn--yellow">View Deal <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+                <a href="{% url 'hotel-detail' %}?hotel={{ hotel.slug }}" class="btn btn--yellow">View Deal <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
               </div>
             </div>
           </div>
 
-          <!-- Result Item 2 -->
-          <div class="result-card">
+          {% comment %}The remaining result cards are rendered by the loop above.{% endcomment %}
+          {% if false %}<div class="result-card">
             <div class="result-card__image-container">
               <span class="badge badge--green result-card__badge" style="background-color: var(--color-green-mid);">Trending</span>
               <img src="{% static 'images/dest-tenerife.jpg' %}" alt="Windmill Bay Boutique Hotel" class="result-card__image">
@@ -192,8 +151,11 @@
                 <a href="{% url 'hotel-detail' %}" class="btn btn--yellow">View Deal <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
               </div>
             </div>
-          </div>
+          </div>{% endif %}
 
+          {% empty %}
+          <p class="text-muted">No holidays found for this destination.</p>
+          {% endfor %}
         </div>
       </div>
     </div>
