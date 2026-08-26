@@ -5,8 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const resultsTitle = document.querySelector('.section-header h1');
   const resultsSubtitle = document.querySelector('.section-header p');
   const stickyDestination = document.querySelector('.sticky-bar__item:first-child span:last-child');
-  const resultCards = Array.from(document.querySelectorAll('.result-card'));
-  const resultsList = document.querySelector('.search-results');
+  const priceRange = document.getElementById('priceRange');
+  const priceValue = document.getElementById('priceValue');
+  const filters = document.querySelector('.search-filters');
 
   if (destination) {
     const formattedDestination = destination.replace(/\s+/g, ' ').trim();
@@ -15,74 +16,37 @@ document.addEventListener('DOMContentLoaded', () => {
     if (stickyDestination) stickyDestination.textContent = formattedDestination;
   }
 
-  const noResults = document.createElement('p');
-  noResults.className = 'text-muted';
-  noResults.textContent = 'No holidays match these filters. Try widening your search.';
-  noResults.hidden = true;
-  resultsList?.appendChild(noResults);
-
-  const filterSections = Array.from(document.querySelectorAll('.filter-section'));
-  const priceRange = document.getElementById('priceRange');
-  const priceValue = document.getElementById('priceValue');
-
-  const getFilterSection = (title) => filterSections.find(section =>
-    section.querySelector('.filter-title')?.textContent.trim() === title
-  );
-
-  const applyFilters = () => {
-    const selectedStars = Array.from(getFilterSection('Star Rating')?.querySelectorAll('input:checked') || [])
-      .map(input => Number(input.closest('label')?.textContent.match(/(\d) Stars/)?.[1]));
-    const selectedBoard = getFilterSection('Board Basis')?.querySelector('input:checked')?.closest('label')?.textContent.trim();
-    const selectedFacilities = Array.from(getFilterSection('Facilities')?.querySelectorAll('input:checked') || [])
-      .map(input => input.closest('label')?.textContent.trim().toLowerCase());
-    const maxPrice = Number(priceRange?.value || Number.MAX_SAFE_INTEGER);
-
-    let visibleCount = 0;
-    resultCards.forEach(card => {
-      const price = Number(card.querySelector('.result-card__price')?.textContent.replace(/[^\d]/g, '') || 0);
-      const score = Number(card.querySelector('.rating-badge__score')?.textContent || 0);
-      const cardText = card.textContent.toLowerCase();
-      const matches = price <= maxPrice
-        && (!selectedStars.length || selectedStars.some(star => Math.floor(score) === star))
-        && (!selectedBoard || cardText.includes(selectedBoard.toLowerCase()))
-        && selectedFacilities.every(facility => facility === 'free wifi'
-          ? cardText.includes('wifi')
-          : cardText.includes(facility));
-
-      card.hidden = !matches;
-      if (matches) visibleCount++;
+  if (priceRange && priceValue) {
+    priceRange.addEventListener('input', (event) => {
+      priceValue.textContent = `Rs ${event.target.value}+`;
     });
+  }
 
-    noResults.hidden = visibleCount > 0;
+  const buildSearchUrl = () => {
+    const params = new URLSearchParams(window.location.search);
+    params.set('max_price', priceRange?.value || '100000');
+    params.delete('stars');
+    params.delete('facility');
+    params.delete('board');
+    document.querySelectorAll('input[name="stars"]:checked').forEach((input) => params.append('stars', input.value));
+    document.querySelectorAll('input[name="facility"]:checked').forEach((input) => params.append('facility', input.value));
+    const board = document.querySelector('input[name="board"]:checked')?.value || '';
+    if (board) params.set('board', board);
+    return `/search/?${params.toString()}`;
   };
 
-  // Price Range Slider
-  if (priceRange && priceValue) {
-    priceRange.addEventListener('input', (e) => {
-      priceValue.textContent = `£${e.target.value}+`;
-      applyFilters();
-    });
-  }
+  document.getElementById('update-search')?.addEventListener('click', () => {
+    window.location.href = buildSearchUrl();
+  });
 
-  document.querySelectorAll('.search-filters input[type="checkbox"], .search-filters input[type="radio"]')
-    .forEach(input => input.addEventListener('change', applyFilters));
+  document.getElementById('refine-search')?.addEventListener('click', () => {
+    filters?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
 
-  // Clear Filters
-  const clearFiltersBtn = document.getElementById('clear-filters');
-  if (clearFiltersBtn) {
-    clearFiltersBtn.addEventListener('click', () => {
-      const inputs = document.querySelectorAll('.search-filters input');
-      inputs.forEach(input => {
-        if (input.type === 'checkbox' || input.type === 'radio') {
-          input.checked = false;
-        } else if (input.type === 'range') {
-          input.value = input.max;
-          if (priceValue) priceValue.textContent = `£${input.max}+`;
-        }
-      });
-      applyFilters();
-    });
-  }
-
-  applyFilters();
+  document.getElementById('clear-filters')?.addEventListener('click', () => {
+    const params = new URLSearchParams(window.location.search);
+    ['max_price', 'stars', 'facility', 'board'].forEach((key) => params.delete(key));
+    params.set('max_price', '100000');
+    window.location.href = `/search/?${params.toString()}`;
+  });
 });

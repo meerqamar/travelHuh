@@ -1,28 +1,54 @@
 /* Checkout Interactions*/
 
+const formatPKR = (value) => `Rs ${Math.round(Number(value)).toLocaleString('en-PK')}`;
+
 document.addEventListener('DOMContentLoaded', () => {
   const btnAddCover = document.getElementById('btn-add-cover');
   const coverCostRow = document.getElementById('cover-cost-row');
   const totalPriceEl = document.getElementById('total-price');
   const checkoutHotelName = document.getElementById('checkout-hotel-name');
+  const checkoutLocation = document.getElementById('checkout-hotel-location');
   const confirmBooking = document.getElementById('confirm-booking');
   const checkoutSteps = document.querySelectorAll('.checkout-stepper .step');
   const paymentSection = document.getElementById('payment-section');
   const checkoutForm = document.getElementById('checkout-form');
+  const coverInput = document.getElementById('checkout-travel-cover');
+  const adultsLabel = document.getElementById('checkout-adults-label');
+  const roomTotalEl = document.getElementById('checkout-room-total');
   const booking = JSON.parse(localStorage.getItem('travelHuhBooking') || 'null');
-  
-  let basePrice = booking?.total || 1188.00;
-  let coverPrice = 45.00;
-  let coverAdded = false;
 
-  if (booking && checkoutHotelName) {
-    checkoutHotelName.textContent = `${booking.roomName} - ${booking.board}`;
-    totalPriceEl.textContent = `£${basePrice.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-  }
+  let basePrice = Number(document.getElementById('checkout-total-price')?.value || booking?.total || 0);
+  const coverPrice = 2500;
+  let coverAdded = false;
+  let paymentReady = false;
+
   if (booking) {
-    document.getElementById('checkout-room-id').value = booking.roomId || '';
-    document.getElementById('checkout-total-price').value = basePrice.toFixed(2);
+    if (checkoutHotelName && !checkoutHotelName.textContent.includes(booking.roomName || '')) {
+      checkoutHotelName.textContent = `${booking.roomName} - ${booking.board}`;
+    }
+    if (!document.getElementById('checkout-room-id').value) {
+      document.getElementById('checkout-room-id').value = booking.roomId || '';
+    }
+    document.getElementById('checkout-guests').value = booking.guests || document.getElementById('checkout-guests').value;
+    document.getElementById('checkout-check-in').value = booking.checkIn || document.getElementById('checkout-check-in').value;
+    document.getElementById('checkout-check-out').value = booking.checkOut || document.getElementById('checkout-check-out').value;
+    if (!basePrice && booking.total) basePrice = Number(booking.total);
+    if (adultsLabel) adultsLabel.textContent = `Adults (x${booking.guests || 2})`;
+    if (roomTotalEl && basePrice) roomTotalEl.textContent = formatPKR(basePrice);
+    if (checkoutLocation && booking.location) checkoutLocation.textContent = booking.location;
   }
+
+  const currentTotal = () => basePrice + (coverAdded ? coverPrice : 0);
+
+  const refreshTotals = () => {
+    const total = currentTotal();
+    if (totalPriceEl) totalPriceEl.textContent = formatPKR(total);
+    document.getElementById('checkout-total-price').value = total.toFixed(2);
+    if (coverInput) coverInput.value = coverAdded ? '1' : '0';
+    if (paymentReady && confirmBooking) confirmBooking.textContent = `Pay ${formatPKR(total)}`;
+  };
+
+  refreshTotals();
 
   if (confirmBooking) {
     const requiredFields = ['firstName', 'lastName', 'dob', 'gender', 'email', 'phone', 'address']
@@ -31,7 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
     validationMessage.className = 'text-sm';
     validationMessage.setAttribute('role', 'status');
     confirmBooking.before(validationMessage);
-    let paymentReady = false;
 
     confirmBooking.addEventListener('click', () => {
       const fieldsToValidate = paymentReady ? [] : requiredFields;
@@ -39,9 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
       fieldsToValidate.forEach(field => field.setAttribute('aria-invalid', String(!field.value.trim())));
 
       if (invalidFields.length) {
-        validationMessage.textContent = paymentReady
-          ? 'Please complete all payment details before confirming your booking.'
-          : 'Please complete all traveller details before continuing.';
+        validationMessage.textContent = 'Please complete all traveller details before continuing.';
         validationMessage.style.color = 'var(--color-pink)';
         invalidFields[0].focus();
         return;
@@ -55,11 +78,11 @@ document.addEventListener('DOMContentLoaded', () => {
         checkoutSteps[0]?.classList.remove('active');
         checkoutSteps[1]?.classList.add('active');
         checkoutSteps[2]?.classList.add('active');
-        confirmBooking.textContent = `Pay £${basePrice.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        refreshTotals();
         return;
       }
 
-      validationMessage.textContent = 'Booking confirmed. Your travel details have been saved.';
+      validationMessage.textContent = 'Opening secure payment...';
       validationMessage.style.color = 'var(--color-green-light)';
 
       const formData = new FormData(checkoutForm);
@@ -83,23 +106,16 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnAddCover && coverCostRow && totalPriceEl) {
     btnAddCover.addEventListener('click', () => {
       coverAdded = !coverAdded;
-      
       if (coverAdded) {
         btnAddCover.textContent = 'Remove Cover';
         btnAddCover.classList.replace('btn--outline', 'btn--ghost');
         coverCostRow.style.display = 'flex';
-        
-        // Update total
-        const newTotal = basePrice + coverPrice;
-        totalPriceEl.textContent = `£${newTotal.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
       } else {
         btnAddCover.textContent = 'Add to Booking';
         btnAddCover.classList.replace('btn--ghost', 'btn--outline');
         coverCostRow.style.display = 'none';
-        
-        // Update total
-        totalPriceEl.textContent = `£${basePrice.toLocaleString('en-GB', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
       }
+      refreshTotals();
     });
   }
 });

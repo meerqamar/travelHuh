@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <link rel="stylesheet" href="{% static 'css/components.css' %}">
 </head>
-<body class="bg-light">
+<body class="bg-light" data-auth="{% if user.is_authenticated %}true{% else %}false{% endif %}" data-shortlist-count="{{ shortlist_count }}">
 
   <!-- Navigation -->
   <nav class="navbar" id="navbar">
@@ -20,7 +20,7 @@
       <ul class="navbar__links">
         <li><a href="#" class="navbar__link">Travel Info</a></li>
         <li><a href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'login' %}{% endif %}" class="navbar__link">{% if user.is_authenticated %}My Trips{% else %}Sign In{% endif %}</a></li>
-        <li><a href="{% url 'search-results' %}" class="navbar__link navbar__link--shortlist">Shortlist (0)</a></li>
+        <li><a href="{% url 'search-results' %}" class="navbar__link navbar__link--shortlist">Shortlist ({{ shortlist_count }})</a></li>
       </ul>
       <div class="navbar__actions">
         <button class="navbar__action-btn" aria-label="Search">
@@ -37,7 +37,7 @@
   <div class="mobile-menu" id="mobile-menu">
     <a href="#" class="mobile-menu__link">Travel Info</a>
     <a href="#" class="mobile-menu__link">Manage Booking</a>
-    <a href="{% url 'search-results' %}" class="mobile-menu__link text-pink">Shortlist (0)</a>
+    <a href="{% url 'search-results' %}" class="mobile-menu__link text-pink">Shortlist ({{ shortlist_count }})</a>
   </div>
 
   <main class="page-wrapper" style="padding-bottom: 80px;">
@@ -49,13 +49,55 @@
       </div>
 
       <div class="search-layout">
-                <input type="radio" name="board" checked> All Inclusive
+        <aside class="search-filters">
+          <div class="filters-header">
+            <h3 class="heading-5">Filters</h3>
+            <button class="btn btn--ghost btn--sm" type="button" id="clear-filters">Clear All</button>
+          </div>
+
+          <div class="filter-section">
+            <h4 class="filter-title">Price Range</h4>
+            <div class="filter-price">
+              <input type="range" class="range-slider" min="0" max="100000" value="{{ max_price }}" id="priceRange" name="max_price">
+              <div class="filter-price-labels">
+                <span>Rs 0</span>
+                <span id="priceValue">Rs {{ max_price }}+</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-section">
+            <h4 class="filter-title">Star Rating</h4>
+            <div class="checkbox-group">
+              <label class="checkbox-item">
+                <input type="checkbox" name="stars" value="5"{% if 5 in stars %} checked{% endif %}>
+                <span class="stars">★★★★★</span> 5 Stars
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" name="stars" value="4"{% if 4 in stars %} checked{% endif %}>
+                <span class="stars">★★★★☆</span> 4 Stars
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" name="stars" value="3"{% if 3 in stars %} checked{% endif %}>
+                <span class="stars">★★★☆☆</span> 3 Stars
+              </label>
+            </div>
+          </div>
+
+          <div class="filter-section">
+            <h4 class="filter-title">Board Basis</h4>
+            <div class="radio-group">
+              <label class="radio-item">
+                <input type="radio" name="board" value=""{% if not board %} checked{% endif %}> Any
               </label>
               <label class="radio-item">
-                <input type="radio" name="board"> Half Board
+                <input type="radio" name="board" value="All Inclusive"{% if board == 'All Inclusive' %} checked{% endif %}> All Inclusive
               </label>
               <label class="radio-item">
-                <input type="radio" name="board"> Self Catering
+                <input type="radio" name="board" value="Half Board"{% if board == 'Half Board' %} checked{% endif %}> Half Board
+              </label>
+              <label class="radio-item">
+                <input type="radio" name="board" value="Self Catering"{% if board == 'Self Catering' %} checked{% endif %}> Self Catering
               </label>
             </div>
           </div>
@@ -63,10 +105,10 @@
           <div class="filter-section">
             <h4 class="filter-title">Facilities</h4>
             <div class="checkbox-group">
-              <label class="checkbox-item"><input type="checkbox" checked> Free WiFi</label>
-              <label class="checkbox-item"><input type="checkbox"> Pool</label>
-              <label class="checkbox-item"><input type="checkbox"> Spa</label>
-              <label class="checkbox-item"><input type="checkbox"> Gym</label>
+              <label class="checkbox-item"><input type="checkbox" name="facility" value="WiFi"{% if 'WiFi' in facilities %} checked{% endif %}> Free WiFi</label>
+              <label class="checkbox-item"><input type="checkbox" name="facility" value="Pool"{% if 'Pool' in facilities %} checked{% endif %}> Pool</label>
+              <label class="checkbox-item"><input type="checkbox" name="facility" value="Spa"{% if 'Spa' in facilities %} checked{% endif %}> Spa</label>
+              <label class="checkbox-item"><input type="checkbox" name="facility" value="Gym"{% if 'Gym' in facilities %} checked{% endif %}> Gym</label>
             </div>
           </div>
         </aside>
@@ -78,7 +120,7 @@
           <div class="result-card">
             <div class="result-card__image-container">
               <span class="badge badge--yellow result-card__badge">Huh? 😁</span>
-              <img src="{% static hotel.image %}" alt="{{ hotel.name }}" class="result-card__image">
+              <img src="{{ hotel.image_url }}" alt="{{ hotel.name }}" class="result-card__image">
               <button class="result-card__wishlist" data-shortlist-id="{{ hotel.slug }}" aria-label="Add to shortlist">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
               </button>
@@ -90,7 +132,7 @@
                   <h3 class="result-card__title">{{ hotel.name }}</h3>
                   <div class="result-card__location">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                    {{ hotel.location }}
+                    {{ hotel.destination.name }}
                   </div>
                 </div>
                 <div class="rating-badge">
@@ -106,10 +148,10 @@
 
               <div class="result-card__footer">
                 <div class="result-card__price-info">
-                  <div class="text-xs text-muted mb-1">Total price for 7 nights</div>
-                  <div class="result-card__price">£{{ hotel.price_per_person|floatformat:0 }} <span class="text-sm fw-medium text-muted">per person</span></div>
+                  <div class="text-xs text-muted mb-1">Total price for {{ nights }} night{{ nights|pluralize }}</div>
+                  <div class="result-card__price">Rs {{ hotel.price_per_person|floatformat:0 }} <span class="text-sm fw-medium text-muted">per person</span></div>
                 </div>
-                <a href="{% url 'hotel-detail' %}?hotel={{ hotel.slug }}" class="btn btn--yellow">View Deal <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+                <a href="{% url 'hotel-detail' %}?hotel={{ hotel.slug }}&check_in={{ check_in }}&check_out={{ check_out }}&guests={{ guests }}" class="btn btn--yellow">View Deal <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
               </div>
             </div>
           </div>
@@ -168,20 +210,20 @@
       <div class="sticky-bar__info">
         <div class="sticky-bar__item">
           <span class="text-xs fw-bold" style="color: var(--color-cyan);">DESTINATION</span>
-          <span class="fw-medium text-white">Mediterranean Hotspots</span>
+          <span class="fw-medium text-white">{% if destination %}{{ destination }}{% else %}Northern Pakistan{% endif %}</span>
         </div>
         <div class="sticky-bar__item">
           <span class="text-xs fw-bold" style="color: var(--color-cyan);">DATES</span>
-          <span class="fw-medium text-white">July 15 - July 22</span>
+          <span class="fw-medium text-white">{{ check_in }} - {{ check_out }}</span>
         </div>
         <div class="sticky-bar__item">
           <span class="text-xs fw-bold" style="color: var(--color-cyan);">PASSENGERS</span>
-          <span class="fw-medium text-white">2 Adults, 1 Child</span>
+          <span class="fw-medium text-white">{{ guests }} Adult{{ guests|pluralize }}</span>
         </div>
       </div>
       <div class="sticky-bar__actions">
-        <button class="btn btn--outline-white btn--sm">Refine</button>
-        <button class="btn btn--primary btn--sm">Update Search</button>
+        <button class="btn btn--outline-white btn--sm" type="button" id="refine-search">Refine</button>
+        <button class="btn btn--primary btn--sm" type="button" id="update-search">Update Search</button>
       </div>
     </div>
   </div>
@@ -218,8 +260,8 @@
         <div>
           <h4 class="footer__col-title">Trust</h4>
           <div class="footer__trust-badges">
-            <span class="footer__trust-badge">ATOL</span>
-            <span class="footer__trust-badge">ABTA</span>
+            <span class="footer__trust-badge">PKR</span>
+            <span class="footer__trust-badge">Secure</span>
           </div>
           <p style="font-size: var(--text-xs); color: rgba(255,255,255,0.5); line-height: 1.5;">© 2026 Travel Huh? All rights reserved.</p>
         </div>
@@ -227,7 +269,8 @@
     </div>
   </footer>
 
-  <script src="{% static 'js/main.js' %}?v=3"></script>
-  <script src="{% static 'js/search.js' %}?v=3"></script>
+  {{ shortlist_slugs|json_script:"shortlist-slugs" }}
+  <script src="{% static 'js/main.js' %}?v=4"></script>
+  <script src="{% static 'js/search.js' %}?v=4"></script>
 </body>
 </html>

@@ -16,9 +16,18 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- Shortlist Persistence ---
   const shortlistStorageKey = 'travelHuhShortlist';
   const shortlistButtons = document.querySelectorAll('[data-shortlist-id]');
-  const shortlistLinks = document.querySelectorAll('a[href="search-results.html"]');
+  const shortlistLinks = document.querySelectorAll('.navbar__link--shortlist, .mobile-menu__link');
+  const isAuthenticated = document.body?.dataset.auth === 'true';
+  const serverSlugs = document.getElementById('shortlist-slugs');
 
   const getShortlist = () => {
+    if (isAuthenticated && serverSlugs) {
+      try {
+        return JSON.parse(serverSlugs.textContent || '[]');
+      } catch {
+        return [];
+      }
+    }
     try {
       return JSON.parse(localStorage.getItem(shortlistStorageKey) || '[]');
     } catch {
@@ -26,8 +35,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  let shortlist = getShortlist();
+
+  const setShortlist = (next) => {
+    shortlist = next;
+    localStorage.setItem(shortlistStorageKey, JSON.stringify(shortlist));
+    if (serverSlugs) serverSlugs.textContent = JSON.stringify(shortlist);
+  };
+
   const updateShortlistUI = () => {
-    const shortlist = getShortlist();
     shortlistButtons.forEach(button => {
       const isSaved = shortlist.includes(button.dataset.shortlistId);
       button.classList.toggle('active', isSaved);
@@ -35,9 +51,10 @@ document.addEventListener('DOMContentLoaded', () => {
       button.setAttribute('aria-pressed', String(isSaved));
     });
     shortlistLinks.forEach(link => {
-      if (link.textContent.includes('Shortlist')) {
-        link.textContent = `Shortlist (${shortlist.length})`;
-      }
+      if (!link.textContent.includes('Shortlist')) return;
+      const svg = link.querySelector('svg');
+      link.textContent = `Shortlist (${shortlist.length})`;
+      if (svg) link.prepend(svg);
     });
   };
 
@@ -55,9 +72,8 @@ document.addEventListener('DOMContentLoaded', () => {
         button.title = data.error || 'Please sign in to save this hotel.';
         return;
       }
-      const shortlist = getShortlist();
       const nextShortlist = data.saved ? [...new Set([...shortlist, hotelId])] : shortlist.filter(id => id !== hotelId);
-      localStorage.setItem(shortlistStorageKey, JSON.stringify(nextShortlist));
+      setShortlist(nextShortlist);
       updateShortlistUI();
     });
   });
@@ -135,9 +151,24 @@ document.addEventListener('DOMContentLoaded', () => {
       const destination = type === 'hotel'
         ? formData.get('hotel-destination')
         : formData.get('destination');
+      const guestsValue = type === 'hotel' ? formData.get('hotel-guests') : formData.get('guests');
+      const guests = String(guestsValue || '2').match(/\d+/)?.[0] || '2';
+      let checkIn = type === 'hotel' ? formData.get('hotel-check-in') : formData.get('check_in');
+      let checkOut = type === 'hotel' ? formData.get('hotel-check-out') : null;
+      if (!checkOut) {
+        const duration = Number(formData.get('duration') || 7);
+        const start = checkIn ? new Date(`${checkIn}T00:00:00`) : new Date('2026-07-15T00:00:00');
+        const end = new Date(start);
+        end.setDate(start.getDate() + duration);
+        checkIn = checkIn || start.toISOString().slice(0, 10);
+        checkOut = end.toISOString().slice(0, 10);
+      }
       const params = new URLSearchParams({
         type,
         destination: String(destination || '').trim(),
+        check_in: checkIn || '2026-07-15',
+        check_out: checkOut || '2026-07-22',
+        guests,
       });
 
       window.location.href = `/search/?${params.toString()}`;

@@ -4,12 +4,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Paradise Vista Resort & Spa | Travel Huh?</title>
+  <title>{{ hotel.name }} | Travel Huh?</title>
   <meta name="csrf-token" content="{{ csrf_token }}">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <link rel="stylesheet" href="{% static 'css/components.css' %}">
 </head>
-<body class="bg-light">
+<body class="bg-light" data-auth="{% if user.is_authenticated %}true{% else %}false{% endif %}" data-shortlist-count="{{ shortlist_count }}" data-hotel-location="{{ hotel.destination.name }}">
 
   <!-- Navigation -->
   <nav class="navbar" id="navbar">
@@ -20,7 +20,7 @@
       <ul class="navbar__links">
         <li><a href="#" class="navbar__link">Travel Info</a></li>
         <li><a href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'login' %}{% endif %}" class="navbar__link">{% if user.is_authenticated %}My Trips{% else %}Sign In{% endif %}</a></li>
-        <li><a href="{% url 'search-results' %}" class="navbar__link navbar__link--shortlist">Shortlist (0)</a></li>
+        <li><a href="{% url 'search-results' %}" class="navbar__link navbar__link--shortlist">Shortlist ({{ shortlist_count }})</a></li>
       </ul>
       <div class="navbar__actions">
         <button class="navbar__action-btn" aria-label="Search">
@@ -37,7 +37,7 @@
   <div class="mobile-menu" id="mobile-menu">
     <a href="#" class="mobile-menu__link">Travel Info</a>
     <a href="#" class="mobile-menu__link">Manage Booking</a>
-    <a href="{% url 'search-results' %}" class="mobile-menu__link text-pink">Shortlist (0)</a>
+    <a href="{% url 'search-results' %}" class="mobile-menu__link text-pink">Shortlist ({{ shortlist_count }})</a>
   </div>
 
   <main class="page-wrapper" style="padding-bottom: 120px;">
@@ -50,15 +50,15 @@
         <span class="breadcrumb__sep">/</span>
         <a href="{% url 'search-results' %}">Destinations</a>
         <span class="breadcrumb__sep">/</span>
-        <a href="{% url 'search-results' %}?dest=maldives">Maldives</a>
+        <a href="{% url 'search-results' %}?destination={{ hotel.destination.name }}">{{ hotel.destination.name }}</a>
         <span class="breadcrumb__sep">/</span>
-        <span class="fw-medium text-text">Paradise Vista Resort & Spa</span>
+        <span class="fw-medium text-text">{{ hotel.name }}</span>
       </nav>
 
       <!-- Image Gallery -->
       <div class="hotel-gallery">
         <div class="hotel-gallery__main">
-          <img src="{% static 'images/dest-maldives.jpg' %}" alt="Main Resort View">
+          <img src="{{ hotel.image_url }}" alt="{{ hotel.name }}">
         </div>
         <div class="hotel-gallery__side">
           <img src="{% static 'images/hotel-pool.jpg' %}" alt="Resort Pool">
@@ -76,18 +76,18 @@
       <div class="hotel-header">
         <div class="hotel-header__info">
           <div class="stars mb-2">★★★★★</div>
-          <span class="badge badge--outline mb-2 ml-2">Platinum Collection</span>
-          <h1 class="heading-2 mb-2">Paradise Vista Resort & Spa</h1>
+          <span class="badge badge--outline mb-2 ml-2">Northern Pakistan</span>
+          <h1 class="heading-2 mb-2">{{ hotel.name }}</h1>
           <div class="result-card__location">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-            Maldives, Indian Ocean
+            {{ hotel.destination.name }}
             <a href="#location" class="text-pink ml-2 fw-medium">Show on map</a>
           </div>
         </div>
         <div class="hotel-header__rating">
           <div class="rating-badge rating-badge--lg">
-            <span class="rating-badge__score">4.8</span>
-            <span class="rating-badge__label">Excellent<br><small>Based on 1,204 reviews</small></span>
+            <span class="rating-badge__score">{{ hotel.rating }}</span>
+            <span class="rating-badge__label">Excellent<br><small>Based on customer reviews</small></span>
           </div>
         </div>
       </div>
@@ -98,10 +98,15 @@
       <section class="hotel-amenities">
         <h3 class="heading-4 mb-4">The Good Stuff</h3>
         <div class="amenities-grid">
+          {% for facility in hotel.facilities %}
           <div class="amenity-item">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pink"><path d="M22 12A10 10 0 0 0 12 2v10z"></path><path d="M12 22A10 10 0 0 0 22 12H12z"></path><path d="M2 12A10 10 0 0 0 12 22V12z"></path><path d="M12 2A10 10 0 0 0 2 12h10z"></path></svg>
-            <span>Beachfront</span>
+            <span>{{ facility }}</span>
           </div>
+          {% endfor %}
+          {% if not hotel.facilities %}<p class="text-muted">Facilities details coming soon.</p>{% endif %}
+          {% comment %}Legacy static amenity entries are replaced by the database loop above.{% endcomment %}
+          {% if false %}
           <div class="amenity-item">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pink"><path d="M2 12h20"></path><path d="M12 2v20"></path></svg>
             <span>Infinity Pool</span>
@@ -122,6 +127,7 @@
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pink"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
             <span>24/7 Room Service</span>
           </div>
+          {% endif %}
         </div>
       </section>
 
@@ -131,19 +137,19 @@
       <div class="booking-context-bar bg-green text-white">
         <div class="booking-context__group">
           <span class="text-xs fw-bold text-cyan">SELECTED DATES</span>
-          <span class="fw-medium">15 Jul - 22 Jul 2026</span>
+          <span class="fw-medium">{{ check_in|date:'j M Y' }} - {{ check_out|date:'j M Y' }}</span>
         </div>
         <div class="booking-context__group">
           <span class="text-xs fw-bold text-cyan">PASSENGERS</span>
-          <span class="fw-medium">2 Adults</span>
+          <span class="fw-medium">{{ guests }} Adult{{ guests|pluralize }}</span>
         </div>
         <div class="booking-context__group">
           <span class="text-xs fw-bold text-cyan">BOARD BASIS</span>
-          <span class="fw-medium">All Inclusive</span>
+          <span class="fw-medium">{{ hotel.board_basis }}</span>
         </div>
         <div class="booking-context__price-box">
-          <div class="booking-context__price-label text-xs">Total price</div>
-          <div class="booking-context__price heading-4 text-yellow">£1,376</div>
+          <div class="booking-context__price-label text-xs">From</div>
+          <div class="booking-context__price heading-4 text-yellow">Rs {{ starting_total|floatformat:0 }}</div>
         </div>
       </div>
 
@@ -171,7 +177,7 @@
               {% for room in hotel.rooms.all %}
               <div class="room-card card{% if forloop.last %} selected{% endif %}">
                 <div class="room-card__img">
-                  <img src="{% static room.image %}" alt="{{ room.name }}">
+                  <img src="{{ room.image_url }}" alt="{{ room.name }}">
                 </div>
                 <div class="room-card__info">
                   <h4 class="heading-5 mb-2">{{ room.name }}</h4>
@@ -182,15 +188,17 @@
                 </div>
                 <div class="room-card__action{% if forloop.last %} bg-pink-light{% endif %}">
                   <div class="room-card__price-box">
-                    <span class="text-muted text-xs">+14 Days</span>
-                    <span class="heading-4 text-pink">£{{ room.price_per_person|floatformat:0 }}<span class="text-sm">pp</span></span>
+                    <span class="text-muted text-xs">{{ nights }} night{{ nights|pluralize }}</span>
+                    <span class="heading-4 text-pink">Rs {{ room.price_per_person|floatformat:0 }}<span class="text-sm">pp</span></span>
                   </div>
-                  <button class="room-card__select{% if forloop.last %} active{% endif %}" data-room-id="{{ room.id }}" data-room-name="{{ room.name }}" data-board="{{ room.board_basis }}" data-price-pp="{{ room.price_per_person|floatformat:0 }}">
+                  <button class="room-card__select{% if forloop.last %} active{% endif %}" data-room-id="{{ room.id }}" data-room-name="{{ room.name }}" data-board="{{ room.board_basis }}" data-price-pp="{{ room.price_per_person }}" data-max-guests="{{ room.max_guests }}">
                     <span class="room-card__radio{% if forloop.last %} active{% endif %}"></span>
                     {% if forloop.last %}SELECTED{% else %}SELECT{% endif %}
                   </button>
                 </div>
               </div>
+              {% empty %}
+              <p class="text-muted">No rooms at this hotel can accommodate {{ guests }} guest{{ guests|pluralize }}.</p>
               {% endfor %}
             </div>
           </div>
@@ -198,30 +206,38 @@
           <!-- Other empty tabs for now -->
           <div class="tab-panel" id="facilities">
             <h3 class="heading-4 mb-4">Hotel Facilities</h3>
-            <p class="text-muted">Extensive facilities details would appear here.</p>
+            <div class="amenities-grid">
+              {% for facility in hotel.facilities %}
+              <div class="amenity-item">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pink"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                <span>{{ facility }}</span>
+              </div>
+              {% empty %}
+              <p class="text-muted">Facilities details coming soon.</p>
+              {% endfor %}
+            </div>
           </div>
           <div class="tab-panel" id="location">
             <h3 class="heading-4 mb-4">Location Map</h3>
-            <div style="height: 300px; background: #e5e7eb; border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center; color: var(--color-text-muted);">Interactive Map Placeholder</div>
+            {% if map_embed_url %}
+            <iframe title="Map of {{ hotel.name }}" src="{{ map_embed_url }}" style="width: 100%; height: 320px; border: 0; border-radius: var(--radius-xl);" loading="lazy"></iframe>
+            <p class="text-sm text-muted mt-3">{{ hotel.destination.name }}</p>
+            {% else %}
+            <p class="text-muted">Map coordinates are not available for this hotel yet.</p>
+            {% endif %}
           </div>
           <div class="tab-panel" id="reviews">
             <h3 class="heading-4 mb-4">Reviews</h3>
             <div class="reviews-grid">
+              {% for review in hotel.reviews.all %}
               <div class="card p-5">
-                <div class="stars mb-2">★★★★★</div>
-                <p class="text-muted mb-4">"Literally said 'Huh?' when I saw the view from my swim-up room. Absolutely stunning resort and the service was world-class."</p>
-                <span class="text-sm fw-bold">— Sarah J., London</span>
+                <div class="stars mb-2">{% for n in "12345" %}{% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}{% endfor %}</div>
+                <p class="text-muted mb-4">"{{ review.body }}"</p>
+                <span class="text-sm fw-bold">— {{ review.author }}{% if review.location %}, {{ review.location }}{% endif %}</span>
               </div>
-              <div class="card p-5">
-                <div class="stars mb-2">★★★★★</div>
-                <p class="text-muted mb-4">"We didn't go hungry once. The pools are massive and the food was actually good! What an incredible trip, 10/10."</p>
-                <span class="text-sm fw-bold">— Mark T., Manchester</span>
-              </div>
-              <div class="card p-5">
-                <div class="stars mb-2">★★★★☆</div>
-                <p class="text-muted mb-4">"The spa is a total dream. My only complaint is that I had to leave. A truly high-end experience for a great price."</p>
-                <span class="text-sm fw-bold">— Elena H., Bristol</span>
-              </div>
+              {% empty %}
+              <p class="text-muted">No guest reviews yet.</p>
+              {% endfor %}
             </div>
           </div>
         </div>
@@ -234,15 +250,15 @@
   <div class="sticky-bar" style="background: var(--color-white); border-top: 1px solid var(--color-border); box-shadow: 0 -10px 30px rgba(0,0,0,0.05);">
     <div class="container sticky-bar__inner">
       <div class="sticky-bar__info" style="align-items: center;">
-        <h3 class="heading-4 text-text m-0" id="booking-room-name">Swim-up Double Room with Terrace</h3>
-        <span class="badge badge--cyan" id="booking-board">All Inclusive</span>
+        <h3 class="heading-4 text-text m-0" id="booking-room-name">{{ selected_room.name|default:'Choose a room' }}</h3>
+        <span class="badge badge--cyan" id="booking-board">{{ hotel.board_basis }}</span>
       </div>
       <div class="sticky-bar__actions" style="align-items: center;">
         <div class="text-right mr-4">
           <div class="text-xs text-muted">Total Price</div>
-          <div class="heading-3 text-pink" id="booking-total">£1,978</div>
+          <div class="heading-3 text-pink" id="booking-total">Rs {{ starting_total|floatformat:0 }}</div>
         </div>
-        <a href="{% url 'checkout' %}" class="btn btn--primary btn--xl">Continue <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+        <a href="{% url 'checkout' %}?check_in={{ check_in|date:'Y-m-d' }}&check_out={{ check_out|date:'Y-m-d' }}&guests={{ guests }}{% if selected_room %}&room_id={{ selected_room.pk }}{% endif %}" class="btn btn--primary btn--xl">Continue <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
       </div>
     </div>
   </div>
@@ -267,15 +283,16 @@
         <div>
           <h4 class="footer__col-title">Trust</h4>
           <div class="footer__trust-badges">
-            <span class="footer__trust-badge">ATOL</span>
-            <span class="footer__trust-badge">ABTA</span>
+            <span class="footer__trust-badge">PKR</span>
+            <span class="footer__trust-badge">Secure</span>
           </div>
         </div>
       </div>
     </div>
   </footer>
 
-  <script src="{% static 'js/main.js' %}?v=3"></script>
-  <script src="{% static 'js/hotel.js' %}?v=3"></script>
+  {{ shortlist_slugs|json_script:"shortlist-slugs" }}
+  <script src="{% static 'js/main.js' %}?v=4"></script>
+  <script src="{% static 'js/hotel.js' %}?v=4"></script>
 </body>
 </html>

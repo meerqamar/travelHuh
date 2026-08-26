@@ -49,10 +49,12 @@
       <!-- Checkout Layout -->
       <form class="checkout-layout" id="checkout-form" method="post" action="{% url 'checkout' %}">
         {% csrf_token %}
-        <input type="hidden" name="room_id" id="checkout-room-id">
-        <input type="hidden" name="total_price" id="checkout-total-price">
-        <input type="hidden" name="check_in" value="2026-07-15">
-        <input type="hidden" name="check_out" value="2026-07-22">
+        <input type="hidden" name="room_id" id="checkout-room-id" value="{% if room %}{{ room.pk }}{% endif %}">
+        <input type="hidden" name="total_price" id="checkout-total-price" value="{% if room_total %}{{ room_total }}{% endif %}">
+        <input type="hidden" name="check_in" id="checkout-check-in" value="{{ check_in }}">
+        <input type="hidden" name="check_out" id="checkout-check-out" value="{{ check_out }}">
+        <input type="hidden" name="guests" id="checkout-guests" value="{{ guests }}">
+        <input type="hidden" name="travel_cover" id="checkout-travel-cover" value="0">
         
         <!-- Left Column: Forms -->
         <div class="checkout-main">
@@ -119,12 +121,12 @@
                 </div>
                 <div class="text-right">
                   <div class="text-xs text-muted fw-bold text-uppercase">PRICE</div>
-                  <div class="heading-4 text-text">£45<span class="text-xs">.00</span></div>
+                  <div class="heading-4 text-text">Rs 2,500</div>
                 </div>
               </div>
               <h4 class="heading-5 mb-2">Premium Travel Cover</h4>
               <p class="text-sm text-muted mb-4">Fully flexible protection including missed departures and medical cover.</p>
-              <button class="btn btn--outline btn--sm w-100" id="btn-add-cover">Add to Booking</button>
+              <button class="btn btn--outline btn--sm w-100" type="button" id="btn-add-cover">Add to Booking</button>
             </div>
 
             <!-- Extra 2 -->
@@ -135,7 +137,7 @@
                 </div>
                 <div class="text-right">
                   <div class="text-xs text-muted fw-bold text-uppercase">INCLUDED</div>
-                  <div class="heading-4 text-text">£0<span class="text-xs">.00</span></div>
+                  <div class="heading-4 text-text">Rs 0</div>
                 </div>
               </div>
               <h4 class="heading-5 mb-2">Private Car Transfer</h4>
@@ -157,32 +159,24 @@
           <div class="summary-card card">
             <div class="summary-card__header">
               <span class="badge badge--yellow" style="position: absolute; top: 12px; left: 12px; z-index: 2;">HUH? BEST VALUE</span>
-              <img src="{% static 'images/dest-maldives.jpg' %}" alt="Blue Horizon Resort & Spa" class="summary-card__img">
+              <img src="{% if room %}{{ room.hotel.image_url }}{% else %}{% static 'images/dest-maldives.jpg' %}{% endif %}" alt="{% if room %}{{ room.hotel.name }}{% else %}Holiday summary{% endif %}" class="summary-card__img">
             </div>
             
             <div class="summary-card__body p-5 bg-green text-white">
-              <h3 class="heading-4 mb-2 text-white" id="checkout-hotel-name">Paradise Vista Resort & Spa</h3>
+              <h3 class="heading-4 mb-2 text-white" id="checkout-hotel-name">{% if room %}{{ room.name }} — {{ room.board_basis }}{% else %}Choose a northern Pakistan stay{% endif %}</h3>
               <div class="text-sm text-cyan mb-6 d-flex align-items-center gap-1">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                Rhodes, Greece
+                <span id="checkout-hotel-location">{% if room %}{{ room.hotel.location }}{% else %}Choose a room to continue{% endif %}</span>
               </div>
 
               <div class="summary-list">
                 <div class="summary-list__item">
-                  <span>Adults (x2)</span>
-                  <span class="fw-bold">£1,198.00</span>
-                </div>
-                <div class="summary-list__item">
-                  <span>Baggage Upgrade</span>
-                  <span class="fw-bold text-yellow">+ £40.00</span>
-                </div>
-                <div class="summary-list__item">
-                  <span>Discount Code</span>
-                  <span class="fw-bold text-cyan">- £50.00</span>
+                  <span id="checkout-adults-label">Adults (x{{ guests }})</span>
+                  <span class="fw-bold" id="checkout-room-total">{% if room_total %}Rs {{ room_total|floatformat:0 }}{% else %}—{% endif %}</span>
                 </div>
                 <div class="summary-list__item" id="cover-cost-row" style="display: none;">
                   <span>Premium Travel Cover</span>
-                  <span class="fw-bold">+ £45.00</span>
+                  <span class="fw-bold">+ Rs {{ cover_price|floatformat:0 }}</span>
                 </div>
               </div>
 
@@ -191,9 +185,9 @@
                 <div class="summary-total d-flex justify-content-between align-items-end mb-6">
                 <div>
                   <div class="text-xs text-uppercase fw-bold text-cyan mb-1">TOTAL PRICE</div>
-                  <div class="heading-2 text-white" id="total-price">£1,188.00</div>
+                  <div class="heading-2 text-white" id="total-price">{% if room_total %}Rs {{ room_total|floatformat:0 }}{% else %}Rs 0{% endif %}</div>
                 </div>
-                <div class="text-xs text-muted">Incl. £20 booking fee</div>
+                <div class="text-xs text-muted">{{ nights }} night{{ nights|pluralize }}</div>
               </div>
 
               <button class="btn btn--primary w-100" id="confirm-booking" type="button" style="font-size: var(--text-lg); padding: 1rem;">Confirm & Continue</button>
@@ -205,7 +199,7 @@
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
             </div>
             <div>
-              <h4 class="text-sm fw-bold">ATOL & ABTA Protected</h4>
+              <h4 class="text-sm fw-bold">Secure PKR checkout</h4>
               <p class="text-xs text-muted">Your holiday is 100% financially secure. Shop with absolute confidence.</p>
             </div>
           </div>
@@ -244,16 +238,16 @@
         <div>
           <h4 class="footer__col-title">Trust</h4>
           <div class="footer__trust-badges">
-            <span class="footer__trust-badge">ATOL</span>
-            <span class="footer__trust-badge">ABTA</span>
+            <span class="footer__trust-badge">PKR</span>
+            <span class="footer__trust-badge">Secure</span>
           </div>
-          <p style="font-size: var(--text-xs); color: rgba(255,255,255,0.5); line-height: 1.5;">© 2026 Travel Huh? All rights reserved. ATOL protected. ABTA member.</p>
+          <p style="font-size: var(--text-xs); color: rgba(255,255,255,0.5); line-height: 1.5;">© 2026 Travel Huh? Pakistan. All rights reserved.</p>
         </div>
       </div>
     </div>
   </footer>
 
-  <script src="{% static 'js/main.js' %}?v=3"></script>
-  <script src="{% static 'js/checkout.js' %}?v=3"></script>
+  <script src="{% static 'js/main.js' %}?v=4"></script>
+  <script src="{% static 'js/checkout.js' %}?v=4"></script>
 </body>
 </html>

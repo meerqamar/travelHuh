@@ -6,12 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light">
   <title>Travel Huh? | You're going where now?</title>
-  <meta name="description" content="Discover destinations that make you say 'Huh?' – the good kind of disbelief.">
+  <meta name="description" content="Book hotels across Skardu, Kashmir, Gilgit, Hunza and more of northern Pakistan.">
   <meta name="csrf-token" content="{{ csrf_token }}">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <link rel="stylesheet" href="{% static 'css/components.css' %}">
 </head>
-<body>
+<body data-auth="{% if user.is_authenticated %}true{% else %}false{% endif %}" data-shortlist-count="{{ shortlist_count }}">
 
   <!-- Navigation -->
   <header class="header-main header-main--floating">
@@ -34,9 +34,9 @@
           <a href="{% if user.is_authenticated %}{% url 'logout' %}{% else %}{% url 'login' %}{% endif %}" class="header-main__link header-main__link--pill">{% if user.is_authenticated %}Sign Out{% else %}Sign In{% endif %}</a>
           {% if user.is_authenticated %}<a href="{% url 'dashboard' %}" class="header-main__link header-main__link--pill">My Trips</a>{% endif %}
           {% if not user.is_authenticated %}<a href="{% url 'register' %}" class="header-main__link header-main__link--pill">Create Account</a>{% endif %}
-          <a href="{% url 'search-results' %}" class="header-main__link header-main__link--pill">
+          <a href="{% url 'search-results' %}" class="header-main__link header-main__link--pill navbar__link--shortlist">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-            Shortlist
+            Shortlist ({{ shortlist_count }})
           </a>
         </div>
 
@@ -62,7 +62,7 @@
     <hr style="border: 0; border-top: 1px solid var(--color-border); margin: var(--space-2) 0;">
     <a href="#" class="mobile-menu__link">Travel Info</a>
     <a href="#" class="mobile-menu__link">Manage Booking</a>
-    <a href="{% url 'search-results' %}" class="mobile-menu__link">Shortlist (0)</a>
+    <a href="{% url 'search-results' %}" class="mobile-menu__link">Shortlist ({{ shortlist_count }})</a>
   </div>
   <main class="page-wrapper page-wrapper--hero">
     
@@ -76,7 +76,7 @@
       <div class="container hero__inner animate-fadeInUp">
         <div class="hero__text-col">
           <h1 class="hero__title hero__title--right">You're going <span class="highlight">where</span> now?</h1>
-          <p class="hero__subtitle hero__subtitle--right">Discover destinations that make you say "Huh?" — the good kind of disbelief.</p>
+          <p class="hero__subtitle hero__subtitle--right">Northern Pakistan holidays that make you say "Huh?" — lakes, peaks, and valleys closer than you think.</p>
         </div>
 
         <div class="hero__widget-col">
@@ -101,14 +101,14 @@
                       <div class="search-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 0-18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></div>
                       <div class="search-field">
                         <label for="destination">ANY DESTINATION</label>
-                        <input type="text" id="destination" placeholder="Where to?" name="destination">
+                        <input type="text" id="destination" placeholder="Skardu, Gilgit, Kashmir..." name="destination">
                       </div>
                     </div>
                     <div class="search-field-half">
                       <div class="search-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></div>
                       <div class="search-field">
-                        <label for="departure">ANY UK AIRPORT</label>
-                        <input type="text" id="departure" placeholder="Flying from" name="departure">
+                        <label for="departure">FLYING FROM</label>
+                        <input type="text" id="departure" placeholder="Islamabad, Lahore, Karachi" name="departure">
                       </div>
                     </div>
                   </div>
@@ -128,8 +128,17 @@
                     <div class="search-field-half">
                       <div class="search-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></div>
                       <div class="search-field">
-                        <label for="dates">SELECT DATE</label>
-                        <input type="text" id="dates" placeholder="When?" name="dates">
+                        <label for="dates">CHECK-IN</label>
+                        <input type="date" id="dates" name="check_in" value="{{ default_check_in }}">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="search-input-row search-input-row--split">
+                    <div class="search-field-half">
+                      <div class="search-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg></div>
+                      <div class="search-field">
+                        <label for="holiday-guests">GUESTS</label>
+                        <input type="number" id="holiday-guests" name="guests" min="1" value="2">
                       </div>
                     </div>
                   </div>
@@ -145,14 +154,23 @@
                       <div class="search-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 0-18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></div>
                       <div class="search-field">
                         <label for="hotel-destination">ANY HOTEL OR DESTINATION</label>
-                        <input type="text" id="hotel-destination" placeholder="Where to?" name="hotel-destination">
+                        <input type="text" id="hotel-destination" placeholder="Skardu, Hunza, Gilgit..." name="hotel-destination">
                       </div>
                     </div>
                     <div class="search-field-half">
                       <div class="search-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></div>
                       <div class="search-field">
-                        <label for="hotel-dates">CHECK-IN & CHECK-OUT</label>
-                        <input type="text" id="hotel-dates" placeholder="When?" name="hotel-dates">
+                        <label for="hotel-check-in">CHECK-IN</label>
+                        <input type="date" id="hotel-check-in" name="hotel-check-in" value="{{ default_check_in }}">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="search-input-row search-input-row--split">
+                    <div class="search-field-half">
+                      <div class="search-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></div>
+                      <div class="search-field">
+                        <label for="hotel-check-out">CHECK-OUT</label>
+                        <input type="date" id="hotel-check-out" name="hotel-check-out" value="{{ default_check_out }}">
                       </div>
                     </div>
                   </div>
@@ -160,8 +178,8 @@
                   <div class="search-input-row">
                     <div class="search-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div>
                     <div class="search-field">
-                      <label for="hotel-guests">GUESTS & ROOMS</label>
-                      <input type="text" id="hotel-guests" placeholder="2 Adults, 1 Room" name="hotel-guests">
+                      <label for="hotel-guests">GUESTS</label>
+                      <input type="number" id="hotel-guests" name="hotel-guests" min="1" value="2">
                     </div>
                   </div>
                   <button type="submit" class="btn btn--pink search-submit-btn">Search Hotels</button>
@@ -181,7 +199,7 @@
             <div class="usp-item__icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
             </div>
-            ATOL Protected
+            Secure PKR Booking
           </div>
           <div class="usp-item">
             <div class="usp-item__icon">
@@ -210,65 +228,41 @@
       <div class="container">
         <div class="section-header section-header--center reveal">
           <span class="section-header__label">Hot Deals</span>
-          <h2 class="section-header__title">Fly off in the next 14 days</h2>
-          <p class="section-header__subtitle">Grab your passport. These last-minute getaways won't hang around for long.</p>
+          <h2 class="section-header__title">Northern Pakistan, this season</h2>
+          <p class="section-header__subtitle">Skardu, Kashmir, Gilgit and Hunza — ready for your next road or air hop.</p>
         </div>
 
         <div class="carousel-wrapper reveal reveal--delay-1">
           <div class="carousel-track" id="deals-track">
-            
-            <!-- Deal 1 -->
+            {% for hotel in featured_hotels %}
             <div class="deal-card">
-              <div class="deal-card__badge badge badge--yellow">Save £150pp</div>
-              <button class="deal-card__wishlist" data-shortlist-id="paradise-vista" aria-label="Add to shortlist">
+              <div class="deal-card__badge badge badge--yellow">Northern Pakistan</div>
+              <button class="deal-card__wishlist" type="button" data-shortlist-id="{{ hotel.slug }}" aria-label="Add to shortlist">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
               </button>
-              <div class="deal-card__image">
-                <img src="{% static 'images/dest-maldives.jpg' %}" alt="Maldives">
-              </div>
+              <a href="{% url 'hotel-detail' %}?hotel={{ hotel.slug }}" class="deal-card__image">
+                <img src="{{ hotel.image_url }}" alt="{{ hotel.name }}">
+              </a>
               <div class="deal-card__body">
-                <div class="deal-card__destination">Maldives, Indian Ocean</div>
-                <h3 class="deal-card__name">Paradise Vista Resort & Spa</h3>
+                <div class="deal-card__destination">{{ hotel.destination.name }}</div>
+                <h3 class="deal-card__name"><a href="{% url 'hotel-detail' %}?hotel={{ hotel.slug }}" style="color: inherit; text-decoration: none;">{{ hotel.name }}</a></h3>
                 <div class="deal-card__features">
-                  <span class="badge badge--outline">All Inclusive</span>
-                  <span class="badge badge--outline">7 Nights</span>
+                  <span class="badge badge--outline">{{ hotel.board_basis }}</span>
+                  <span class="badge badge--outline">From Islamabad</span>
                 </div>
                 <div class="deal-card__price-row">
-                  <div class="deal-card__price-label">Includes flights</div>
-                  <div class="deal-card__price">£1,376 <span class="deal-card__price-pp">pp</span></div>
+                  <div class="deal-card__price-label">Per person</div>
+                  <div class="deal-card__price">Rs {{ hotel.price_per_person|floatformat:0 }} <span class="deal-card__price-pp">pp</span></div>
                 </div>
               </div>
             </div>
+            {% endfor %}
 
-            <!-- Deal 2 -->
-            <div class="deal-card">
-              <div class="deal-card__badge badge badge--yellow">Save £85pp</div>
-              <button class="deal-card__wishlist" data-shortlist-id="sapphire-oasis" aria-label="Add to shortlist">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-              </button>
-              <div class="deal-card__image">
-                <img src="{% static 'images/dest-santorini.jpg' %}" alt="Santorini">
-              </div>
-              <div class="deal-card__body">
-                <div class="deal-card__destination">Santorini, Greece</div>
-                <h3 class="deal-card__name">The Sapphire Oasis Resort</h3>
-                <div class="deal-card__features">
-                  <span class="badge badge--outline">Half Board</span>
-                  <span class="badge badge--outline">5 Nights</span>
-                </div>
-                <div class="deal-card__price-row">
-                  <div class="deal-card__price-label">Includes flights</div>
-                  <div class="deal-card__price">£849 <span class="deal-card__price-pp">pp</span></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Promo Card -->
             <div class="deal-card" style="background: var(--color-pink); color: var(--color-white); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: var(--space-6);">
               <img src="{% static 'logo-white.svg' %}" alt="" style="height: 40px; margin-bottom: var(--space-4);">
               <h3 class="heading-4 text-white mb-2">We've got more...</h3>
-              <p style="color: rgba(255,255,255,0.8); font-size: var(--text-sm); margin-bottom: var(--space-6);">Explore hundreds of last-minute escapes ready for you.</p>
-              <a href="{% url 'search-results' %}" class="btn btn--outline-white">See all deals</a>
+              <p style="color: rgba(255,255,255,0.8); font-size: var(--text-sm); margin-bottom: var(--space-6);">Explore Skardu, Kashmir, Gilgit, Hunza and more northern stays.</p>
+              <a href="{% url 'search-results' %}" class="btn btn--outline-white">See all stays</a>
             </div>
 
           </div>
@@ -294,22 +288,22 @@
         </div>
 
         <div class="trending-grid reveal reveal--delay-1">
-          <a href="{% url 'search-results' %}?dest=rhodes" class="trending-card trending-card--large">
-            <img src="{% static 'images/dest-santorini.jpg' %}" alt="Rhodes" class="trending-card__img">
+          <a href="{% url 'search-results' %}?destination=Skardu" class="trending-card trending-card--large">
+            <img src="{% static 'images/dest-maldives.jpg' %}" alt="Skardu" class="trending-card__img">
             <div class="trending-card__overlay">
-              <h3 class="trending-card__title">Rhodes</h3>
+              <h3 class="trending-card__title">Skardu</h3>
             </div>
           </a>
-          <a href="{% url 'search-results' %}?dest=tenerife" class="trending-card">
-            <img src="{% static 'images/dest-tenerife.jpg' %}" alt="Tenerife" class="trending-card__img">
+          <a href="{% url 'search-results' %}?destination=Gilgit" class="trending-card">
+            <img src="{% static 'images/dest-tenerife.jpg' %}" alt="Gilgit" class="trending-card__img">
             <div class="trending-card__overlay">
-              <h3 class="trending-card__title">Tenerife</h3>
+              <h3 class="trending-card__title">Gilgit</h3>
             </div>
           </a>
-          <a href="{% url 'search-results' %}?dest=maldives" class="trending-card">
-            <img src="{% static 'images/dest-maldives.jpg' %}" alt="Maldives" class="trending-card__img">
+          <a href="{% url 'search-results' %}?destination=Kashmir" class="trending-card">
+            <img src="{% static 'images/dest-santorini.jpg' %}" alt="Kashmir" class="trending-card__img">
             <div class="trending-card__overlay">
-              <h3 class="trending-card__title">Maldives</h3>
+              <h3 class="trending-card__title">Kashmir</h3>
             </div>
           </a>
         </div>
@@ -323,7 +317,7 @@
           <div class="split-content__text reveal">
             <span class="section-header__label">The Travel Huh? Difference</span>
             <h2 class="heading-2" style="margin-bottom: var(--space-4);">We're not just another travel site.</h2>
-            <p class="text-muted" style="font-size: var(--text-lg);">When you book with us, you're getting hand-picked hotels, unbeatable prices, and support when you need it.</p>
+            <p class="text-muted" style="font-size: var(--text-lg);">Hand-picked stays in Skardu, Kashmir, Gilgit and Hunza, with PKR pricing and support in Pakistan time.</p>
             
             <ul class="split-content__list">
               <li>
@@ -331,8 +325,8 @@
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                 </div>
                 <div>
-                  <h4>100% Protected</h4>
-                  <p>Your money is safe with ATOL and ABTA protection.</p>
+                  <h4>Secure PKR checkout</h4>
+                  <p>Pay in Pakistani rupees with a protected booking hold and confirmation email.</p>
                 </div>
               </li>
               <li>
@@ -377,21 +371,21 @@
             <img src="{% static 'images/blog-2.jpg' %}" alt="Couple walking" class="blog-card__img">
             <div class="blog-card__content">
               <span class="blog-card__tag">Couples</span>
-              <h3 class="blog-card__title">The Most Romantic Escapes for 2026</h3>
+              <h3 class="blog-card__title">Hunza and Gilgit in one trip</h3>
             </div>
           </a>
           <a href="#" class="blog-card">
             <img src="{% static 'images/hotel-pool.jpg' %}" alt="Hotel pool" class="blog-card__img">
             <div class="blog-card__content">
               <span class="blog-card__tag">Luxury</span>
-              <h3 class="blog-card__title">5 Pools You Need to Swim in Before You Die</h3>
+              <h3 class="blog-card__title">Kashmir valleys worth the drive</h3>
             </div>
           </a>
           <a href="#" class="blog-card">
             <img src="{% static 'images/blog-3.jpg' %}" alt="Drone view of resort" class="blog-card__img">
             <div class="blog-card__content">
               <span class="blog-card__tag">Guides</span>
-              <h3 class="blog-card__title">First Timer's Guide to the Maldives</h3>
+              <h3 class="blog-card__title">First timer's guide to Skardu</h3>
             </div>
           </a>
         </div>
@@ -412,7 +406,7 @@
         <div class="newsletter-section__content">
           <span class="newsletter-section__label">Promo</span>
           <h3 class="newsletter-section__title">Join the Insiders</h3>
-          <p class="newsletter-section__subtitle">Get exclusive "Huh?" moments delivered to your inbox and save up to £500 on your next escape.</p>
+          <p class="newsletter-section__subtitle">Get northern Pakistan trip ideas in your inbox and save on Skardu, Kashmir and Hunza stays.</p>
           <form class="newsletter-form">
             <input type="email" placeholder="Enter your email" class="newsletter-input" required>
             <button type="submit" class="btn btn--primary">Sign Up</button>
@@ -425,7 +419,7 @@
           <a href="{% url 'home' %}" class="footer__brand-logo">
             <img src="{% static 'logo.jpeg' %}" alt="Travel Huh? Logo" class="site-logo">
           </a>
-          <p class="footer__brand-tagline">You're going where now? Discover destinations that make you double-take. High quality, bold aesthetics, unforgettable memories.</p>
+          <p class="footer__brand-tagline">You're going where now? Skardu, Kashmir, Gilgit, Hunza — the north of Pakistan, booked in PKR.</p>
           <div class="footer__socials">
             <a href="#" class="footer__social-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
             <a href="#" class="footer__social-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>
@@ -456,10 +450,10 @@
         <div>
           <h4 class="footer__col-title">Trust</h4>
           <div class="footer__trust-badges">
-            <span class="footer__trust-badge">ATOL</span>
-            <span class="footer__trust-badge">ABTA</span>
+            <span class="footer__trust-badge">PKR</span>
+            <span class="footer__trust-badge">Secure</span>
           </div>
-          <p style="font-size: var(--text-xs); color: var(--color-white); line-height: 1.5;">© 2026 Travel Huh? All rights reserved. ATOL protected. ABTA member. Registered in the UK.</p>
+          <p style="font-size: var(--text-xs); color: var(--color-white); line-height: 1.5;">© 2026 Travel Huh? Pakistan. All rights reserved.</p>
         </div>
       </div>
 
@@ -476,6 +470,7 @@
     </div>
   </footer>
 
-  <script src="{% static 'js/main.js' %}?v=3"></script>
+  {{ shortlist_slugs|json_script:"shortlist-slugs" }}
+  <script src="{% static 'js/main.js' %}?v=4"></script>
 </body>
 </html>

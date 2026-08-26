@@ -36,6 +36,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'travel.context_processors.booking_context',
             ],
         },
     },
@@ -49,16 +50,27 @@ DATABASES = {
     },
 }
 
-LANGUAGE_CODE = 'en-gb'
-TIME_ZONE = 'Europe/London'
+LANGUAGE_CODE = 'en-pk'
+TIME_ZONE = 'Asia/Karachi'
 USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = 'bookings@travelhuh.test'
+DEFAULT_FROM_EMAIL = 'bookings@travelhuh.pk'
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', '')
 STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', '')
 SITE_URL = os.environ.get('SITE_URL', 'http://127.0.0.1:8000')
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://127.0.0.1:6379/0')
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', CELERY_BROKER_URL)
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_BEAT_SCHEDULE = {
+    'cleanup-expired-bookings-every-five-minutes': {
+        'task': 'travel.tasks.cleanup_expired_bookings',
+        'schedule': 300.0,
+    },
+}

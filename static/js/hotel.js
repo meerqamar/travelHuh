@@ -4,23 +4,32 @@ document.addEventListener('DOMContentLoaded', () => {
   const bookingRoomName = document.getElementById('booking-room-name');
   const bookingBoard = document.getElementById('booking-board');
   const bookingTotal = document.getElementById('booking-total');
-  const bookingContinue = document.querySelector('.sticky-bar a[href="checkout.html"]');
+  const bookingContinue = document.querySelector('.sticky-bar a[href^="/checkout/"]');
+  const searchParams = new URLSearchParams(window.location.search);
+  const checkIn = searchParams.get('check_in') || '2026-07-15';
+  const checkOut = searchParams.get('check_out') || '2026-07-22';
+  const requestedGuests = Math.max(1, Number(searchParams.get('guests') || 2));
 
   const updateBookingSummary = (button) => {
+    if (!button) return;
     const pricePerPerson = Number(button.dataset.pricePp);
     const booking = {
       roomId: button.dataset.roomId,
       roomName: button.dataset.roomName,
       board: button.dataset.board,
       pricePerPerson,
-      total: pricePerPerson * 2,
+      guests: requestedGuests,
+      checkIn,
+      checkOut,
+      location: document.body.dataset.hotelLocation || '',
+      total: pricePerPerson * requestedGuests,
     };
 
     localStorage.setItem('travelHuhBooking', JSON.stringify(booking));
     if (bookingRoomName) bookingRoomName.textContent = booking.roomName;
     if (bookingBoard) bookingBoard.textContent = booking.board;
-    if (bookingTotal) bookingTotal.textContent = `£${booking.total.toLocaleString('en-GB')}`;
-    if (bookingContinue) bookingContinue.href = `/checkout/?room=${encodeURIComponent(booking.roomName)}`;
+    if (bookingTotal) bookingTotal.textContent = `Rs ${booking.total.toLocaleString('en-PK')}`;
+    if (bookingContinue) bookingContinue.href = `/checkout/?check_in=${encodeURIComponent(booking.checkIn)}&check_out=${encodeURIComponent(booking.checkOut)}&guests=${booking.guests}&room_id=${encodeURIComponent(booking.roomId)}`;
   };
 
   // --- Tabs Logic ---
@@ -48,6 +57,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   roomSelectBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
+      const requestedGuests = Number(new URLSearchParams(window.location.search).get('guests') || 2);
+      if (requestedGuests > Number(btn.dataset.maxGuests)) {
+        btn.title = `This room accommodates a maximum of ${btn.dataset.maxGuests} guests.`;
+        return;
+      }
       // Reset all cards
       const allCards = document.querySelectorAll('.room-card');
       const allRadios = document.querySelectorAll('.room-card__radio');

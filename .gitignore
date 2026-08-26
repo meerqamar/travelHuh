@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+celerybeat-schedule
+celerybeat-schedule-shm
+celerybeat-schedule-wal
+media/
