@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% if hotel %}Edit Hotel{% else %}Add Hotel{% endif %} | Extranet</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components.css' %}">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <style>
+    form p { margin-bottom: 1rem; }
+    form label { display: block; font-weight: 500; margin-bottom: 0.25rem; }
+    form input[type="text"], form input[type="number"], form select, form textarea { width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; }
+  </style>
+</head>
+<body class="bg-light">
+  <main class="container section section--sm">
+    <div class="card p-8">
+      <h1 class="heading-3 mb-6">{% if hotel %}Edit {{ hotel.name }}{% else %}Add New Hotel{% endif %}</h1>
+      
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h2 class="heading-4 mb-4 mt-6">Basic Info</h2>
+        {{ form.as_p }}
+
+        <h3 class="heading-5 mb-2 mt-6">Pin Location</h3>
+        <p class="text-sm text-muted mb-4">Drag the marker or click on the map to set the exact coordinates of your property.</p>
+        <div id="location-picker-map" style="height: 400px; width: 100%; border-radius: 8px; margin-bottom: 20px; z-index: 1;"></div>
+        
+        <h2 class="heading-4 mb-4 mt-8">Photo Gallery</h2>
+        {{ formset.management_form }}
+        <div id="formset-container">
+          {% for f in formset %}
+            <div class="formset-row card p-4 mb-4" style="background: #fff;">
+              {{ f.as_p }}
+            </div>
+          {% endfor %}
+        </div>
+        <button type="button" class="btn btn--outline btn--sm mb-6" id="add-photo-btn">+ Add another photo</button>
+        
+        <div class="mt-6">
+          <button type="submit" class="btn btn--primary">Save Hotel</button>
+          <a href="{% url 'extranet-dashboard' %}" class="btn btn--ghost ml-4">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </main>
+  
+  <script>
+    document.getElementById('add-photo-btn').addEventListener('click', function() {
+      const container = document.getElementById('formset-container');
+      const totalForms = document.getElementById('id_gallery_images-TOTAL_FORMS');
+      let formCount = parseInt(totalForms.value);
+      
+      const rows = container.getElementsByClassName('formset-row');
+      const newRow = rows[rows.length - 1].cloneNode(true);
+      
+      newRow.innerHTML = newRow.innerHTML.replace(new RegExp(`-${formCount - 1}-`, 'g'), `-${formCount}-`);
+      newRow.innerHTML = newRow.innerHTML.replace(new RegExp(`_${formCount - 1}_`, 'g'), `_${formCount}_`);
+      
+      newRow.querySelectorAll('input:not([type=hidden]), select, textarea').forEach(input => {
+        if (input.type === 'checkbox') input.checked = false;
+        else input.value = '';
+      });
+      
+      container.appendChild(newRow);
+      totalForms.value = formCount + 1;
+    });
+
+    // Leaflet map setup for Location Picker
+    document.addEventListener("DOMContentLoaded", function() {
+      const latInput = document.getElementById('id_latitude');
+      const lngInput = document.getElementById('id_longitude');
+      
+      if (!latInput || !lngInput) return; // Inputs not found, exit early
+
+      // Default to Gilgit or existing coordinates
+      let parsedLat = parseFloat(latInput.value);
+      let parsedLng = parseFloat(lngInput.value);
+      
+      let initialLat = !isNaN(parsedLat) ? parsedLat : 35.9208;
+      let initialLng = !isNaN(parsedLng) ? parsedLng : 74.3083;
+
+      const map = L.map('location-picker-map').setView([initialLat, initialLng], 13);
+      
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '© OpenStreetMap'
+      }).addTo(map);
+
+      let marker = L.marker([initialLat, initialLng], {draggable: true}).addTo(map);
+
+      function updateInputs(lat, lng) {
+          latInput.value = lat.toFixed(6);
+          lngInput.value = lng.toFixed(6);
+      }
+      
+      // If no initial value, set one so inputs aren't completely blank when adding a new hotel
+      if (isNaN(parsedLat) || isNaN(parsedLng)) {
+          updateInputs(initialLat, initialLng);
+      }
+
+      // Update when marker is dragged
+      marker.on('dragend', function (e) {
+          const pos = marker.getLatLng();
+          updateInputs(pos.lat, pos.lng);
+      });
+
+      // Update when map is clicked
+      map.on('click', function(e) {
+          marker.setLatLng(e.latlng);
+          updateInputs(e.latlng.lat, e.latlng.lng);
+      });
+      
+      // Update map when manual inputs are changed
+      function updateMapFromInputs() {
+          let lat = parseFloat(latInput.value);
+          let lng = parseFloat(lngInput.value);
+          if (!isNaN(lat) && !isNaN(lng)) {
+              let pos = new L.LatLng(lat, lng);
+              marker.setLatLng(pos);
+              map.setView(pos);
+          }
+      }
+      
+      latInput.addEventListener('input', updateMapFromInputs);
+      lngInput.addEventListener('input', updateMapFromInputs);
+    });
+  </script>
+</body>
+</html>

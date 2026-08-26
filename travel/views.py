@@ -10,6 +10,18 @@ from django.views.decorators.csrf import csrf_exempt
 import stripe
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from decimal import Decimal
+
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
+from django.db.models import F, Prefetch, Q
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+import stripe
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.db import transaction
 from django.views.decorators.http import require_POST
 from datetime import date
@@ -18,6 +30,8 @@ from django.utils import timezone
 
 from .inventory import find_availability, restore_availability
 from .models import Availability, Booking, Hotel, Passenger, Room, Shortlist
+from .forms import HotelForm, RoomForm, HotelImageFormSet, RoomImageFormSet
+from django.utils.text import slugify
 
 TRAVEL_COVER_PRICE = Decimal('2500.00')
 
@@ -82,6 +96,22 @@ def search_results(request):
     board = request.GET.get('board', '').strip()
     stars = [int(value) for value in request.GET.getlist('stars') if value.isdigit()]
     facilities = [value.strip() for value in request.GET.getlist('facility') if value.strip()]
+    
+    # New Advanced Filters
+    property_types = request.GET.getlist('property_type')
+    payment_options = request.GET.getlist('payment_option')
+    special_tags = request.GET.getlist('special_tag')
+    room_offers = request.GET.getlist('room_offer')
+    room_amenities = request.GET.getlist('room_amenity')
+    bed_types = request.GET.getlist('bed_type')
+    
+    # Numeric / threshold filters
+    guest_ratings = [int(v) for v in request.GET.getlist('guest_rating') if v.isdigit()]
+    location_ratings = [int(v) for v in request.GET.getlist('location_rating') if v.isdigit()]
+    distances = [v for v in request.GET.getlist('distance')]
+    bedrooms = [int(v) for v in request.GET.getlist('bedrooms') if v.isdigit()]
+    kids_stay_free = request.GET.get('kids_stay_free') == 'on'
+
     if destination:
         hotels = hotels.filter(Q(destination__name__icontains=destination) | Q(name__icontains=destination))
     hotels = hotels.filter(
@@ -98,8 +128,48 @@ def search_results(request):
         for star in stars:
             rating_filter |= Q(rating__gte=star, rating__lt=star + 1)
         hotels = hotels.filter(rating_filter)
+        
+    if guest_ratings:
+        hotels = hotels.filter(rating__gte=min(guest_ratings))
+    if location_ratings:
+        hotels = hotels.filter(location_rating__gte=min(location_ratings))
+        
+    if property_types:
+        hotels = hotels.filter(property_type__in=property_types)
+    if bed_types:
+        hotels = hotels.filter(rooms__bed_type__in=bed_types)
+    if bedrooms:
+        hotels = hotels.filter(rooms__number_of_bedrooms__gte=min(bedrooms))
+    if kids_stay_free:
+        hotels = hotels.filter(rooms__kids_stay_free=True)
+        
+    # Distance logic (e.g. 'center', '2', '5', '10', '10+')
+    if distances:
+        distance_filter = Q()
+        for d in distances:
+            if d == 'center':
+                distance_filter |= Q(distance_to_center=0)
+            elif d == '2':
+                distance_filter |= Q(distance_to_center__lte=2)
+            elif d == '5':
+                distance_filter |= Q(distance_to_center__lte=5)
+            elif d == '10':
+                distance_filter |= Q(distance_to_center__lte=10)
+            elif d == '10+':
+                distance_filter |= Q(distance_to_center__gt=10)
+        hotels = hotels.filter(distance_filter)
+
     for facility in facilities:
         hotels = hotels.filter(facilities__icontains=facility)
+    for po in payment_options:
+        hotels = hotels.filter(payment_options__icontains=po)
+    for tag in special_tags:
+        hotels = hotels.filter(special_tags__icontains=tag)
+    for ro in room_offers:
+        hotels = hotels.filter(rooms__room_offers__icontains=ro)
+    for ra in room_amenities:
+        hotels = hotels.filter(rooms__room_amenities__icontains=ra)
+        
     hotels = hotels.distinct()
     return render(request, 'search_results.html', {
         'hotels': hotels,
@@ -112,6 +182,18 @@ def search_results(request):
         'board': board,
         'stars': stars,
         'facilities': facilities,
+        # pass context for active state
+        'property_types': property_types,
+        'payment_options': payment_options,
+        'special_tags': special_tags,
+        'room_offers': room_offers,
+        'room_amenities': room_amenities,
+        'bed_types': bed_types,
+        'guest_ratings': guest_ratings,
+        'location_ratings': location_ratings,
+        'distances': distances,
+        'bedrooms': bedrooms,
+        'kids_stay_free': kids_stay_free,
     })
 
 
@@ -342,3 +424,61 @@ def stripe_webhook(request):
                 locked.payment_status = 'expired'
                 locked.save(update_fields=['status', 'payment_status'])
     return JsonResponse({'received': True})
+
+@login_required
+def extranet_dashboard(request):
+    hotels = request.user.hotels.prefetch_related('rooms').all()
+    return render(request, 'extranet/dashboard.html', {'hotels': hotels})
+
+@login_required
+def extranet_hotel_create(request):
+    if request.method == 'POST':
+        form = HotelForm(request.POST, request.FILES)
+        formset = HotelImageFormSet(request.POST, request.FILES)
+        if form.is_valid() and formset.is_valid():
+            hotel = form.save(commit=False)
+            hotel.owner = request.user
+            hotel.slug = slugify(hotel.name)[:50]
+            hotel.save()
+            formset.instance = hotel
+            formset.save()
+            return redirect('extranet-dashboard')
+    else:
+        form = HotelForm()
+        formset = HotelImageFormSet()
+    return render(request, 'extranet/hotel_form.html', {'form': form, 'formset': formset})
+
+@login_required
+def extranet_hotel_edit(request, hotel_id):
+    hotel = get_object_or_404(Hotel, id=hotel_id, owner=request.user)
+    if request.method == 'POST':
+        form = HotelForm(request.POST, request.FILES, instance=hotel)
+        formset = HotelImageFormSet(request.POST, request.FILES, instance=hotel)
+        if form.is_valid() and formset.is_valid():
+            hotel = form.save(commit=False)
+            hotel.slug = slugify(hotel.name)[:50]
+            hotel.save()
+            formset.save()
+            return redirect('extranet-dashboard')
+    else:
+        form = HotelForm(instance=hotel)
+        formset = HotelImageFormSet(instance=hotel)
+    return render(request, 'extranet/hotel_form.html', {'form': form, 'formset': formset, 'hotel': hotel})
+
+@login_required
+def extranet_room_create(request, hotel_id):
+    hotel = get_object_or_404(Hotel, id=hotel_id, owner=request.user)
+    if request.method == 'POST':
+        form = RoomForm(request.POST, request.FILES)
+        formset = RoomImageFormSet(request.POST, request.FILES)
+        if form.is_valid() and formset.is_valid():
+            room = form.save(commit=False)
+            room.hotel = hotel
+            room.save()
+            formset.instance = room
+            formset.save()
+            return redirect('extranet-dashboard')
+    else:
+        form = RoomForm()
+        formset = RoomImageFormSet()
+    return render(request, 'extranet/room_form.html', {'form': form, 'formset': formset, 'hotel': hotel})

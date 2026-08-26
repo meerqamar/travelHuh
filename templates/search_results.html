@@ -85,30 +85,80 @@
           </div>
 
           <div class="filter-section">
-            <h4 class="filter-title">Board Basis</h4>
-            <div class="radio-group">
-              <label class="radio-item">
-                <input type="radio" name="board" value=""{% if not board %} checked{% endif %}> Any
-              </label>
-              <label class="radio-item">
-                <input type="radio" name="board" value="All Inclusive"{% if board == 'All Inclusive' %} checked{% endif %}> All Inclusive
-              </label>
-              <label class="radio-item">
-                <input type="radio" name="board" value="Half Board"{% if board == 'Half Board' %} checked{% endif %}> Half Board
-              </label>
-              <label class="radio-item">
-                <input type="radio" name="board" value="Self Catering"{% if board == 'Self Catering' %} checked{% endif %}> Self Catering
-              </label>
+            <h4 class="filter-title">Property type</h4>
+            <div class="checkbox-group">
+              <label class="checkbox-item"><input type="checkbox" name="property_type" value="Hotel"{% if 'Hotel' in property_types %} checked{% endif %}> Hotel</label>
+              <label class="checkbox-item"><input type="checkbox" name="property_type" value="Guesthouse"{% if 'Guesthouse' in property_types %} checked{% endif %}> Guesthouse/bed and breakfast</label>
+              <label class="checkbox-item"><input type="checkbox" name="property_type" value="Apartment"{% if 'Apartment' in property_types %} checked{% endif %}> Entire homes & apartments</label>
+              <label class="checkbox-item"><input type="checkbox" name="property_type" value="Flat"{% if 'Flat' in property_types %} checked{% endif %}> Apartment/Flat</label>
+              <label class="checkbox-item"><input type="checkbox" name="property_type" value="Resort"{% if 'Resort' in property_types %} checked{% endif %}> Resort</label>
+              <label class="checkbox-item"><input type="checkbox" name="property_type" value="Hostel"{% if 'Hostel' in property_types %} checked{% endif %}> Hostel</label>
+              <label class="checkbox-item"><input type="checkbox" name="property_type" value="Homestay"{% if 'Homestay' in property_types %} checked{% endif %}> Homestay</label>
             </div>
           </div>
 
           <div class="filter-section">
-            <h4 class="filter-title">Facilities</h4>
+            <h4 class="filter-title">Payment options</h4>
             <div class="checkbox-group">
-              <label class="checkbox-item"><input type="checkbox" name="facility" value="WiFi"{% if 'WiFi' in facilities %} checked{% endif %}> Free WiFi</label>
-              <label class="checkbox-item"><input type="checkbox" name="facility" value="Pool"{% if 'Pool' in facilities %} checked{% endif %}> Pool</label>
-              <label class="checkbox-item"><input type="checkbox" name="facility" value="Spa"{% if 'Spa' in facilities %} checked{% endif %}> Spa</label>
-              <label class="checkbox-item"><input type="checkbox" name="facility" value="Gym"{% if 'Gym' in facilities %} checked{% endif %}> Gym</label>
+              <label class="checkbox-item"><input type="checkbox" name="payment_option" value="Free cancellation"{% if 'Free cancellation' in payment_options %} checked{% endif %}> Free cancellation</label>
+              <label class="checkbox-item"><input type="checkbox" name="payment_option" value="Pay at the hotel"{% if 'Pay at the hotel' in payment_options %} checked{% endif %}> Pay at the hotel</label>
+              <label class="checkbox-item"><input type="checkbox" name="payment_option" value="Pay now"{% if 'Pay now' in payment_options %} checked{% endif %}> Pay now</label>
+              <label class="checkbox-item"><input type="checkbox" name="payment_option" value="Book without credit card"{% if 'Book without credit card' in payment_options %} checked{% endif %}> Book without credit card</label>
+            </div>
+          </div>
+
+          <div class="filter-section">
+            <h4 class="filter-title">Guest rating</h4>
+            <div class="radio-group">
+              <label class="radio-item"><input type="radio" name="guest_rating" value="9"{% if 9 in guest_ratings %} checked{% endif %}> 9+ Exceptional</label>
+              <label class="radio-item"><input type="radio" name="guest_rating" value="8"{% if 8 in guest_ratings %} checked{% endif %}> 8+ Excellent</label>
+              <label class="radio-item"><input type="radio" name="guest_rating" value="7"{% if 7 in guest_ratings %} checked{% endif %}> 7+ Very good</label>
+              <label class="radio-item"><input type="radio" name="guest_rating" value="6"{% if 6 in guest_ratings %} checked{% endif %}> 6+ Good</label>
+            </div>
+          </div>
+
+          <div class="filter-section">
+            <h4 class="filter-title">Property facilities</h4>
+            <div class="checkbox-group">
+              <label class="checkbox-item"><input type="checkbox" name="facility" value="Swimming pool"{% if 'Swimming pool' in facilities %} checked{% endif %}> Swimming pool</label>
+              <label class="checkbox-item"><input type="checkbox" name="facility" value="Internet"{% if 'Internet' in facilities %} checked{% endif %}> Internet</label>
+              <label class="checkbox-item"><input type="checkbox" name="facility" value="Car park"{% if 'Car park' in facilities %} checked{% endif %}> Car park</label>
+              <label class="checkbox-item"><input type="checkbox" name="facility" value="Airport transfer"{% if 'Airport transfer' in facilities %} checked{% endif %}> Airport transfer</label>
+              <label class="checkbox-item"><input type="checkbox" name="facility" value="Front desk"{% if 'Front desk' in facilities %} checked{% endif %}> Front desk [24-hour]</label>
+              <label class="checkbox-item"><input type="checkbox" name="facility" value="Family"{% if 'Family' in facilities %} checked{% endif %}> Family/child friendly</label>
+              <label class="checkbox-item"><input type="checkbox" name="facility" value="Non-smoking"{% if 'Non-smoking' in facilities %} checked{% endif %}> Non-smoking</label>
+              <label class="checkbox-item"><input type="checkbox" name="facility" value="Restaurants"{% if 'Restaurants' in facilities %} checked{% endif %}> Restaurants</label>
+            </div>
+          </div>
+
+          <div class="filter-section">
+            <h4 class="filter-title">Room offers</h4>
+            <div class="checkbox-group">
+              <label class="checkbox-item"><input type="checkbox" name="room_offer" value="Breakfast included"{% if 'Breakfast included' in room_offers %} checked{% endif %}> Breakfast included</label>
+              <label class="checkbox-item"><input type="checkbox" name="room_offer" value="Lunch included"{% if 'Lunch included' in room_offers %} checked{% endif %}> Lunch included</label>
+              <label class="checkbox-item"><input type="checkbox" name="room_offer" value="Dinner included"{% if 'Dinner included' in room_offers %} checked{% endif %}> Dinner included</label>
+              <label class="checkbox-item"><input type="checkbox" name="room_offer" value="Early check-in"{% if 'Early check-in' in room_offers %} checked{% endif %}> Early check-in</label>
+            </div>
+          </div>
+
+          <div class="filter-section">
+            <h4 class="filter-title">Distance to center</h4>
+            <div class="checkbox-group">
+              <label class="checkbox-item"><input type="checkbox" name="distance" value="center"{% if 'center' in distances %} checked{% endif %}> Inside city center</label>
+              <label class="checkbox-item"><input type="checkbox" name="distance" value="2"{% if '2' in distances %} checked{% endif %}> &lt;2 km to center</label>
+              <label class="checkbox-item"><input type="checkbox" name="distance" value="5"{% if '5' in distances %} checked{% endif %}> 2-5 km to center</label>
+              <label class="checkbox-item"><input type="checkbox" name="distance" value="10"{% if '10' in distances %} checked{% endif %}> 5-10 km to center</label>
+              <label class="checkbox-item"><input type="checkbox" name="distance" value="10+"{% if '10+' in distances %} checked{% endif %}> &gt;10 km to center</label>
+            </div>
+          </div>
+          
+          <div class="filter-section">
+            <h4 class="filter-title">Looking for something special?</h4>
+            <div class="checkbox-group">
+              <label class="checkbox-item"><input type="checkbox" name="special_tag" value="Great for Groups"{% if 'Great for Groups' in special_tags %} checked{% endif %}> Great for Groups</label>
+              <label class="checkbox-item"><input type="checkbox" name="special_tag" value="Pets Allowed"{% if 'Pets Allowed' in special_tags %} checked{% endif %}> Pets Allowed</label>
+              <label class="checkbox-item"><input type="checkbox" name="special_tag" value="Great for Families"{% if 'Great for Families' in special_tags %} checked{% endif %}> Great for Families</label>
+              <label class="checkbox-item"><input type="checkbox" name="special_tag" value="Workation Friendly"{% if 'Workation Friendly' in special_tags %} checked{% endif %}> Workation Friendly</label>
             </div>
           </div>
         </aside>

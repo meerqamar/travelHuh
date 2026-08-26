@@ -7,21 +7,80 @@
   <title>Create Account | Travel Huh?</title>
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <link rel="stylesheet" href="{% static 'css/components.css' %}">
+  <style>
+    body {
+      background: url('https://images.unsplash.com/photo-1579607148784-5a214197ec0f?auto=format&fit=crop&q=80&w=2071') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      font-family: var(--font-sans);
+    }
+    .auth-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 3rem;
+      width: 90%;
+      max-width: 460px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      border: 1px solid rgba(255,255,255,0.4);
+    }
+    .auth-logo {
+      display: block;
+      margin: 0 auto 2rem;
+      width: 100px;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .form-input {
+      background: rgba(255,255,255,0.9);
+      border: 1px solid #ccc;
+      transition: all 0.3s ease;
+      width: 100%;
+      padding: 0.8rem;
+      border-radius: 8px;
+    }
+    .form-input:focus {
+      background: #fff;
+      border-color: var(--color-pink-500);
+      box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.2);
+      outline: none;
+    }
+    .form-label {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+  </style>
 </head>
-<body class="bg-light">
-  <main class="container section section--sm container--narrow">
-    <div class="card p-6">
-      <h1 class="heading-3 mb-6">Create your Travel Huh? account</h1>
-      {% if error %}<p class="text-pink mb-4">{{ error }}</p>{% endif %}
-      <form method="post">
-        {% csrf_token %}
-        <div class="form-group mb-4"><label class="form-label" for="username">Username</label><input class="form-input" id="username" name="username" required></div>
-        <div class="form-group mb-4"><label class="form-label" for="email">Email</label><input class="form-input" id="email" name="email" type="email" required></div>
-        <div class="form-group mb-6"><label class="form-label" for="password">Password</label><input class="form-input" id="password" name="password" type="password" minlength="8" required></div>
-        <button class="btn btn--primary w-100" type="submit">Create Account</button>
-      </form>
-      <p class="text-muted mt-4">Already registered? <a class="text-pink" href="{% url 'login' %}">Sign in</a></p>
-    </div>
-  </main>
+<body>
+  <div class="auth-card">
+    <a href="{% url 'home' %}"><img src="{% static 'logo.jpeg' %}" alt="Travel Huh?" class="auth-logo"></a>
+    <h1 class="heading-3 mb-6 text-center" style="font-weight: 700; color: #1a1a1a;">Create an account</h1>
+    {% if error %}<p class="text-pink mb-4 text-center" style="background: rgba(236,72,153,0.1); padding: 10px; border-radius: 8px; font-weight: 500;">{{ error }}</p>{% endif %}
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group mb-4">
+        <label class="form-label" for="username">Username</label>
+        <input class="form-input" id="username" name="username" placeholder="Choose a username" required>
+      </div>
+      <div class="form-group mb-4">
+        <label class="form-label" for="email">Email</label>
+        <input class="form-input" id="email" name="email" type="email" placeholder="Enter your email" required>
+      </div>
+      <div class="form-group mb-6">
+        <label class="form-label" for="password">Password</label>
+        <input class="form-input" id="password" name="password" type="password" minlength="8" placeholder="Must be at least 8 characters" required>
+      </div>
+      <button class="btn btn--primary w-100" type="submit" style="font-weight: 600; padding: 0.9rem; font-size: 1.1rem; border-radius: 8px;">Create Account</button>
+    </form>
+    <p class="text-muted mt-6 text-center">Already registered? <br><a class="text-pink font-bold" href="{% url 'login' %}" style="font-weight: 600; text-decoration: none;">Sign in here</a></p>
+  </div>
 </body>
 </html>

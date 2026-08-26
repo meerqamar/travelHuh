@@ -7,44 +7,151 @@
   <title>My Trips | Travel Huh?</title>
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <link rel="stylesheet" href="{% static 'css/components.css' %}">
+  <style>
+    body { background-color: #f8f9fa; font-family: var(--font-sans); margin: 0; }
+    .account-header {
+      background: #ffffff;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+      border-bottom: 1px solid #eaeaea;
+    }
+    .account-logo { height: 40px; border-radius: 8px; }
+    .hero-banner {
+      background: linear-gradient(135deg, var(--color-blue-600, #3b82f6), var(--color-purple-500, #8b5cf6));
+      color: white;
+      padding: 3rem 2rem;
+      border-radius: 16px;
+      margin-bottom: 3rem;
+      box-shadow: 0 10px 30px rgba(59,130,246,0.2);
+    }
+    .booking-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+      border: 1px solid #f1f5f9;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .booking-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+    .saved-hotel-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .saved-hotel-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      transition: transform 0.2s ease;
+      border: 1px solid #eee;
+    }
+    .saved-hotel-card:hover { transform: translateY(-4px); box-shadow: 0 12px 25px rgba(0,0,0,0.1); }
+    .saved-hotel-card__img {
+      height: 160px;
+      background-size: cover;
+      background-position: center;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+    .status-confirmed { background: #dcfce7; color: #166534; }
+    .status-pending { background: #fef9c3; color: #854d0e; }
+    .status-cancelled { background: #fee2e2; color: #991b1b; }
+  </style>
 </head>
-<body class="bg-light">
-  <main class="container section section--sm">
-    <div class="section-header">
-      <span class="section-header__label">Your account</span>
-      <h1 class="heading-2">My Trips</h1>
-      <p class="text-muted">Welcome back, {{ user.username }}.</p>
+<body>
+  <header class="account-header">
+    <div class="d-flex align-items-center" style="gap: 1rem;">
+      <a href="{% url 'home' %}"><img src="{% static 'logo.jpeg' %}" alt="Travel Huh?" class="account-logo"></a>
+    </div>
+    <div class="d-flex align-items-center" style="gap: 1rem;">
+      <a href="{% url 'logout' %}" class="btn btn--outline btn--sm">Sign Out</a>
+    </div>
+  </header>
+
+  <main class="container section">
+    <div class="hero-banner d-flex justify-content-between align-items-center flex-wrap" style="gap: 1.5rem;">
+      <div>
+        <span style="text-transform: uppercase; letter-spacing: 1px; font-size: 0.875rem; opacity: 0.9; font-weight: 600;">Your Account</span>
+        <h1 class="heading-2 mb-2 mt-2" style="color: white;">My Trips</h1>
+        <p style="font-size: 1.1rem; opacity: 0.9;">Welcome back, {{ user.username }}. Ready for your next adventure?</p>
+      </div>
+      <a href="{% url 'extranet-dashboard' %}" class="btn" style="background: white; color: var(--color-blue-600, #3b82f6); font-weight: 600; padding: 0.8rem 1.5rem; border-radius: 8px;">Partner Extranet</a>
     </div>
 
     <section class="mb-10">
-      <h2 class="heading-4 mb-4">Bookings</h2>
-      {% for booking in bookings %}
-      <article class="card p-5 mb-4">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <h3 class="heading-5">{{ booking.hotel.name }}</h3>
-            <p class="text-muted">{{ booking.room.name }} · {{ booking.check_in|date:'j M Y' }} to {{ booking.check_out|date:'j M Y' }}</p>
+      <h2 class="heading-4 mb-6">Your Bookings</h2>
+      
+      {% if bookings %}
+        <div class="d-flex flex-column" style="gap: 1rem;">
+        {% for booking in bookings %}
+        <article class="booking-card">
+          <div class="d-flex justify-content-between align-items-start flex-wrap" style="gap: 1rem;">
+            <div>
+              <h3 class="heading-5 mb-1">{{ booking.hotel.name }}</h3>
+              <p class="text-muted text-sm mb-2">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: text-bottom;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                {{ booking.hotel.destination.name }}
+              </p>
+              <p class="font-medium" style="color: #334155;">{{ booking.room.name }}</p>
+              <p class="text-muted mt-1">{{ booking.check_in|date:'M j, Y' }} — {{ booking.check_out|date:'M j, Y' }}</p>
+            </div>
+            <div class="text-right d-flex flex-column align-items-end">
+              <span class="status-badge status-{{ booking.status|lower }} mb-3">{{ booking.get_status_display }}</span>
+              <strong style="font-size: 1.25rem;">Rs {{ booking.total_price|floatformat:0 }}</strong>
+              {% if booking.status == 'confirmed' %}
+              <form method="post" action="{% url 'cancel-booking' booking.id %}" class="mt-3">
+                {% csrf_token %}
+                <button class="btn btn--outline btn--sm" style="color: #dc2626; border-color: #dc2626;" type="submit">Cancel Booking</button>
+              </form>
+              {% endif %}
+            </div>
           </div>
-          <div class="text-right"><strong>Rs {{ booking.total_price|floatformat:0 }}</strong><p class="text-sm text-green">{{ booking.get_status_display }}</p>{% if booking.status == 'confirmed' %}<form method="post" action="{% url 'cancel-booking' booking.id %}">{% csrf_token %}<button class="btn btn--ghost btn--sm mt-2" type="submit">Cancel booking</button></form>{% endif %}</div>
+        </article>
+        {% endfor %}
         </div>
-      </article>
-      {% empty %}<p class="text-muted">You have no bookings yet.</p>{% endfor %}
+      {% else %}
+        <div style="background: white; border-radius: 12px; padding: 3rem; text-align: center; border: 2px dashed #cbd5e1;">
+          <h3 class="heading-5 mb-2">No upcoming trips</h3>
+          <p class="text-muted mb-6">Looks like you don't have any bookings yet. Time to plan a getaway!</p>
+          <a href="{% url 'home' %}" class="btn btn--primary">Explore Destinations</a>
+        </div>
+      {% endif %}
     </section>
 
     <section>
-      <h2 class="heading-4 mb-4">Saved hotels</h2>
-      <div class="blog-row">
+      <h2 class="heading-4 mb-6">Saved Hotels</h2>
+      
+      {% if shortlists %}
+      <div class="saved-hotel-grid">
         {% for shortlist in shortlists %}
-        <article class="card p-4">
-          <img src="{{ shortlist.hotel.image_url }}" alt="{{ shortlist.hotel.name }}" class="blog-card__img">
-          <h3 class="heading-5 mt-3">{{ shortlist.hotel.name }}</h3>
-          <p class="text-muted">{{ shortlist.hotel.destination.name }}</p>
-          <a class="btn btn--yellow btn--sm mt-3" href="{% url 'hotel-detail' %}?hotel={{ shortlist.hotel.slug }}">View hotel</a>
+        <article class="saved-hotel-card">
+          <div class="saved-hotel-card__img" style="background-image: url('{% if shortlist.hotel.photo %}{{ shortlist.hotel.photo.url }}{% else %}https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800{% endif %}');"></div>
+          <div style="padding: 1.5rem;">
+            <h3 class="heading-5 mb-1">{{ shortlist.hotel.name }}</h3>
+            <p class="text-muted text-sm mb-4">{{ shortlist.hotel.destination.name }}</p>
+            <a class="btn btn--primary w-100" href="{% url 'hotel-detail' %}?hotel={{ shortlist.hotel.slug }}">View Details</a>
+          </div>
         </article>
-        {% empty %}<p class="text-muted">You have no saved hotels yet.</p>{% endfor %}
+        {% endfor %}
       </div>
+      {% else %}
+        <div style="background: white; border-radius: 12px; padding: 3rem; text-align: center; border: 2px dashed #cbd5e1;">
+          <p class="text-muted">You have no saved hotels yet.</p>
+        </div>
+      {% endif %}
     </section>
-    <a class="btn btn--ghost mt-8" href="{% url 'logout' %}">Sign Out</a>
   </main>
 </body>
 </html>

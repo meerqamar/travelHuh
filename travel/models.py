@@ -28,23 +28,47 @@ class Destination(PhotoMixin, models.Model):
 
 
 class Hotel(PhotoMixin, models.Model):
+    PROPERTY_TYPES = [
+        ('Hotel', 'Hotel'),
+        ('Guesthouse', 'Guesthouse/bed and breakfast'),
+        ('Apartment', 'Entire homes & apartments'),
+        ('Flat', 'Apartment/Flat'),
+        ('Resort', 'Resort'),
+        ('Hostel', 'Hostel'),
+        ('Homestay', 'Homestay'),
+        ('House', 'Entire House'),
+        ('HolidayPark', 'Holiday park/caravan park'),
+    ]
     name = models.CharField(max_length=160)
     slug = models.SlugField(unique=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='hotels', null=True, blank=True)
     destination = models.ForeignKey(Destination, related_name='hotels', on_delete=models.PROTECT, null=True, blank=True)
     image = models.CharField(max_length=255, blank=True)
     photo = models.ImageField(upload_to='hotels/', blank=True)
-    rating = models.DecimalField(max_digits=2, decimal_places=1)
+    rating = models.DecimalField(max_digits=2, decimal_places=1, default=5.0)
     price_per_person = models.DecimalField(max_digits=8, decimal_places=2)
     board_basis = models.CharField(max_length=80)
     facilities = models.JSONField(default=list)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    property_type = models.CharField(max_length=50, choices=PROPERTY_TYPES, default='Hotel')
+    payment_options = models.JSONField(default=list, blank=True)
+    location_rating = models.DecimalField(max_digits=3, decimal_places=1, default=8.0)
+    distance_to_center = models.DecimalField(max_digits=5, decimal_places=2, default=5.0, help_text="Distance to center in km")
+    special_tags = models.JSONField(default=list, blank=True)
 
     def __str__(self):
         return self.name
 
 
 class Room(PhotoMixin, models.Model):
+    BED_TYPES = [
+        ('Single', 'Single/twin'),
+        ('Double', 'Double'),
+        ('King', 'King'),
+        ('Queen', 'Queen'),
+        ('Bunk', 'Bunk bed'),
+    ]
     hotel = models.ForeignKey(Hotel, related_name='rooms', on_delete=models.CASCADE)
     name = models.CharField(max_length=160)
     image = models.CharField(max_length=255, blank=True)
@@ -52,7 +76,12 @@ class Room(PhotoMixin, models.Model):
     board_basis = models.CharField(max_length=80)
     price_per_person = models.DecimalField(max_digits=8, decimal_places=2)
     max_guests = models.PositiveIntegerField(default=2)
-    features = models.JSONField(default=list)
+    features = models.JSONField(default=list, blank=True)
+    room_offers = models.JSONField(default=list, blank=True)
+    room_amenities = models.JSONField(default=list, blank=True)
+    bed_type = models.CharField(max_length=50, choices=BED_TYPES, default='Double')
+    number_of_bedrooms = models.PositiveIntegerField(default=1)
+    kids_stay_free = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.hotel.name} - {self.name}'
@@ -124,3 +153,27 @@ class Review(models.Model):
 
     def __str__(self):
         return f'{self.author} on {self.hotel}'
+
+class HotelImage(models.Model):
+    CATEGORY_CHOICES = [
+        ('exterior', 'Exterior'),
+        ('interior', 'Interior'),
+        ('amenities', 'Amenities'),
+        ('other', 'Other'),
+    ]
+    hotel = models.ForeignKey(Hotel, related_name='gallery_images', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='hotels/gallery/')
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='other')
+    caption = models.CharField(max_length=100, blank=True)
+
+class RoomImage(models.Model):
+    CATEGORY_CHOICES = [
+        ('bedroom', 'Bedroom'),
+        ('bathroom', 'Bathroom'),
+        ('view', 'View'),
+        ('other', 'Other'),
+    ]
+    room = models.ForeignKey(Room, related_name='gallery_images', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='rooms/gallery/')
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='other')
+    caption = models.CharField(max_length=100, blank=True)
