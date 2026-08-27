@@ -201,7 +201,7 @@
                   <div class="text-xs text-muted mb-1">Total price for {{ nights }} night{{ nights|pluralize }}</div>
                   <div class="result-card__price">Rs {{ hotel.price_per_person|floatformat:0 }} <span class="text-sm fw-medium text-muted">per person</span></div>
                 </div>
-                <a href="{% url 'hotel-detail' %}?hotel={{ hotel.slug }}&check_in={{ check_in }}&check_out={{ check_out }}&guests={{ guests }}" class="btn btn--yellow">View Deal <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+                <a href="{% url 'hotel-detail' %}?hotel={{ hotel.slug }}&check_in={{ check_in }}&check_out={{ check_out }}&guests={{ guests }}&type={{ search_type }}&departure={{ departure }}" class="btn btn--yellow">View Deal <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
               </div>
             </div>
           </div>

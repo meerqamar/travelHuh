@@ -54,6 +54,7 @@
         <input type="hidden" name="check_in" id="checkout-check-in" value="{{ check_in }}">
         <input type="hidden" name="check_out" id="checkout-check-out" value="{{ check_out }}">
         <input type="hidden" name="guests" id="checkout-guests" value="{{ guests }}">
+        <input type="hidden" name="transport_id" value="{% if transport_route %}{{ transport_route.id }}{% endif %}">
         <input type="hidden" name="travel_cover" id="checkout-travel-cover" value="0">
         
         <!-- Left Column: Forms -->
@@ -174,6 +175,12 @@
                   <span id="checkout-adults-label">Adults (x{{ guests }})</span>
                   <span class="fw-bold" id="checkout-room-total">{% if room_total %}Rs {{ room_total|floatformat:0 }}{% else %}—{% endif %}</span>
                 </div>
+                {% if transport_route %}
+                <div class="summary-list__item">
+                  <span>{{ transport_route.mode_of_transport }}: {{ transport_route.origin }} to {{ transport_route.destination.name }}</span>
+                  <span class="fw-bold">Rs {{ transport_total|floatformat:0 }}</span>
+                </div>
+                {% endif %}
                 <div class="summary-list__item" id="cover-cost-row" style="display: none;">
                   <span>Premium Travel Cover</span>
                   <span class="fw-bold">+ Rs {{ cover_price|floatformat:0 }}</span>
@@ -185,7 +192,12 @@
                 <div class="summary-total d-flex justify-content-between align-items-end mb-6">
                 <div>
                   <div class="text-xs text-uppercase fw-bold text-cyan mb-1">TOTAL PRICE</div>
-                  <div class="heading-2 text-white" id="total-price">{% if room_total %}Rs {{ room_total|floatformat:0 }}{% else %}Rs 0{% endif %}</div>
+                  <div class="heading-2 text-white" id="total-price" 
+                       data-room-total="{% if room_total %}{{ room_total }}{% else %}0{% endif %}" 
+                       data-transport-total="{% if transport_total %}{{ transport_total }}{% else %}0{% endif %}" 
+                       data-cover-price="{{ cover_price }}">
+                    Rs {% if room_total %}{{ room_total|add:transport_total|default:room_total|floatformat:0 }}{% else %}0{% endif %}
+                  </div>
                 </div>
                 <div class="text-xs text-muted">{{ nights }} night{{ nights|pluralize }}</div>
               </div>
@@ -248,6 +260,6 @@
   </footer>
 
   <script src="{% static 'js/main.js' %}?v=4"></script>
-  <script src="{% static 'js/checkout.js' %}?v=4"></script>
+  <script src="{% static 'js/checkout.js' %}?v=5"></script>
 </body>
 </html>

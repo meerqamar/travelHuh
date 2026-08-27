@@ -29,7 +29,7 @@ from datetime import timedelta
 from django.utils import timezone
 
 from .inventory import find_availability, restore_availability
-from .models import Availability, Booking, Hotel, Passenger, Room, Shortlist
+from .models import Availability, Booking, Hotel, Passenger, Room, Shortlist, TransportRoute
 from .forms import HotelForm, RoomForm, HotelImageFormSet, RoomImageFormSet
 from django.utils.text import slugify
 
@@ -81,6 +81,9 @@ def home(request):
 
 
 def search_results(request):
+    search_type = request.GET.get('type', 'hotel')
+    departure = request.GET.get('departure', '').strip()
+    
     hotels = Hotel.objects.all()
     destination = request.GET.get('destination', '').strip()
     start_date, end_date = parse_stay(request.GET.get('check_in'), request.GET.get('check_out'))
@@ -171,7 +174,22 @@ def search_results(request):
         hotels = hotels.filter(rooms__room_amenities__icontains=ra)
         
     hotels = hotels.distinct()
+    
+    # Holiday Package logic: attach transport routes
+    transport_routes = {}
+    if search_type == 'holiday':
+        for hotel in hotels:
+            route = TransportRoute.objects.filter(
+                destination=hotel.destination, 
+                origin__icontains=departure if departure else 'Islamabad'
+            ).first()
+            if not route:
+                route = TransportRoute.objects.filter(destination=hotel.destination).first()
+            transport_routes[hotel.id] = route
     return render(request, 'search_results.html', {
+        'search_type': search_type,
+        'departure': departure,
+        'transport_routes': transport_routes,
         'hotels': hotels,
         'destination': destination,
         'check_in': check_in,
@@ -199,6 +217,9 @@ def search_results(request):
 
 def hotel_detail(request):
     slug = request.GET.get('hotel', 'shangrila-skardu')
+    search_type = request.GET.get('type', 'hotel')
+    departure = request.GET.get('departure', '').strip()
+    
     start_date, end_date = parse_stay(request.GET.get('check_in'), request.GET.get('check_out'))
     guests = parse_guests(request.GET.get('guests'))
     nights = stay_nights(start_date, end_date)
@@ -210,8 +231,23 @@ def hotel_detail(request):
     rooms_list = list(hotel.rooms.all())
     lowest = min(rooms_list, key=lambda room: room.price_per_person) if rooms_list else None
     selected_room = rooms_list[-1] if rooms_list else None
-    starting_total = (lowest.price_per_person * guests) if lowest else hotel.price_per_person * guests
+    
+    transport_route = None
+    if search_type == 'holiday':
+        transport_route = TransportRoute.objects.filter(
+            destination=hotel.destination, 
+            origin__icontains=departure if departure else 'Islamabad'
+        ).first()
+        if not transport_route:
+            transport_route = TransportRoute.objects.filter(destination=hotel.destination).first()
+            
+    starting_total = (lowest.price_per_person * guests * nights) if lowest else hotel.price_per_person * guests * nights
+    if transport_route:
+        starting_total += transport_route.price_per_person * guests
+        
     return render(request, 'hotel_detail.html', {
+        'search_type': search_type,
+        'transport_route': transport_route,
         'hotel': hotel,
         'check_in': start_date,
         'check_out': end_date,
@@ -235,9 +271,16 @@ def checkout(request):
         if guests > room.max_guests:
             return JsonResponse({'error': f'This room accommodates a maximum of {room.max_guests} guests.'}, status=400)
         travel_cover = request.POST.get('travel_cover') in {'1', 'true', 'on'}
-        room_total = room.price_per_person * guests
-        total_price = room_total + (TRAVEL_COVER_PRICE if travel_cover else Decimal('0.00'))
         check_in, check_out = parse_stay(request.POST.get('check_in'), request.POST.get('check_out'))
+        nights = stay_nights(check_in, check_out)
+        room_total = room.price_per_person * guests * nights
+        
+        transport_id = request.POST.get('transport_id')
+        transport_route = TransportRoute.objects.filter(pk=transport_id).first() if transport_id else None
+        transport_total = (transport_route.price_per_person * guests) if transport_route else Decimal('0.00')
+        
+        total_price = room_total + transport_total + (TRAVEL_COVER_PRICE if travel_cover else Decimal('0.00'))
+        
         availability = find_availability(room, check_in, check_out)
         if not availability:
             return JsonResponse({'error': 'This room is not available for the selected dates.'}, status=400)
@@ -275,6 +318,7 @@ def checkout(request):
                 check_out=check_out,
                 guests=guests,
                 total_price=total_price,
+                transport_route=transport_route,
                 status='pending',
                 expires_at=expires_at,
                 travel_cover=travel_cover,
@@ -289,6 +333,17 @@ def checkout(request):
             },
             'quantity': 1,
         }]
+        
+        if transport_route:
+            line_items.append({
+                'price_data': {
+                    'currency': 'pkr',
+                    'product_data': {'name': f'Flight: {transport_route.origin} to {transport_route.destination.name}'},
+                    'unit_amount': int(transport_total * 100),
+                },
+                'quantity': 1,
+            })
+            
         if travel_cover:
             line_items.append({
                 'price_data': {
@@ -318,8 +373,14 @@ def checkout(request):
 
     start_date, end_date = parse_stay(request.GET.get('check_in'), request.GET.get('check_out'))
     guests = parse_guests(request.GET.get('guests'))
+    nights = stay_nights(start_date, end_date)
     room = Room.objects.select_related('hotel').filter(pk=request.GET.get('room_id')).first()
-    room_total = (room.price_per_person * guests) if room else None
+    room_total = (room.price_per_person * guests * nights) if room else None
+    
+    transport_id = request.GET.get('transport_id')
+    transport_route = TransportRoute.objects.filter(pk=transport_id).first() if transport_id else None
+    transport_total = (transport_route.price_per_person * guests) if transport_route else None
+    
     return render(request, 'checkout.html', {
         'check_in': start_date.isoformat(),
         'check_out': end_date.isoformat(),
@@ -327,6 +388,8 @@ def checkout(request):
         'nights': stay_nights(start_date, end_date),
         'room': room,
         'room_total': room_total,
+        'transport_route': transport_route,
+        'transport_total': transport_total,
         'cover_price': TRAVEL_COVER_PRICE,
     })
 

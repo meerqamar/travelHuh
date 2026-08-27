@@ -100,6 +100,17 @@ class Availability(models.Model):
         return f'{self.room} - {self.check_in} to {self.check_out}'
 
 
+class TransportRoute(models.Model):
+    MODE_CHOICES = [('Flight', 'Flight'), ('Coach', 'Coach'), ('Private Transfer', 'Private Transfer')]
+    origin = models.CharField(max_length=160)
+    destination = models.ForeignKey(Destination, related_name='transport_routes', on_delete=models.CASCADE)
+    price_per_person = models.DecimalField(max_digits=8, decimal_places=2)
+    mode_of_transport = models.CharField(max_length=50, choices=MODE_CHOICES, default='Flight')
+
+    def __str__(self):
+        return f"{self.mode_of_transport} - {self.origin} to {self.destination.name}"
+
+
 class Booking(models.Model):
     STATUS_CHOICES = [('pending', 'Pending'), ('confirmed', 'Confirmed'), ('cancelled', 'Cancelled')]
 
@@ -108,6 +119,7 @@ class Booking(models.Model):
     user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='bookings')
     check_in = models.DateField(null=True, blank=True)
     check_out = models.DateField(null=True, blank=True)
+    transport_route = models.ForeignKey(TransportRoute, null=True, blank=True, on_delete=models.SET_NULL)
     guests = models.PositiveIntegerField(default=2)
     total_price = models.DecimalField(max_digits=8, decimal_places=2)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')

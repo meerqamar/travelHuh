@@ -17,8 +17,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const roomTotalEl = document.getElementById('checkout-room-total');
   const booking = JSON.parse(localStorage.getItem('travelHuhBooking') || 'null');
 
-  let basePrice = Number(document.getElementById('checkout-total-price')?.value || booking?.total || 0);
-  const coverPrice = 2500;
+  const coverPrice = Number(totalPriceEl?.dataset.coverPrice || 2500);
+  const roomTotal = Number(totalPriceEl?.dataset.roomTotal || 0);
+  const transportTotal = Number(totalPriceEl?.dataset.transportTotal || 0);
+  let baseTotal = roomTotal + transportTotal;
+  
+  // Fallback for non-dataset versions
+  if (baseTotal === 0 && document.getElementById('checkout-total-price')?.value) {
+      baseTotal = Number(document.getElementById('checkout-total-price').value);
+  }
+  
   let coverAdded = false;
   let paymentReady = false;
 
@@ -105,17 +113,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnAddCover && coverCostRow && totalPriceEl) {
     btnAddCover.addEventListener('click', () => {
-      coverAdded = !coverAdded;
-      if (coverAdded) {
-        btnAddCover.textContent = 'Remove Cover';
-        btnAddCover.classList.replace('btn--outline', 'btn--ghost');
-        coverCostRow.style.display = 'flex';
-      } else {
+      const isAdded = coverInput.value === '1';
+      if (isAdded) {
+        coverInput.value = '0';
         btnAddCover.textContent = 'Add to Booking';
-        btnAddCover.classList.replace('btn--ghost', 'btn--outline');
+        btnAddCover.classList.replace('btn--primary', 'btn--outline');
         coverCostRow.style.display = 'none';
+        coverAdded = false;
+        totalPriceEl.textContent = formatPKR(baseTotal);
+      } else {
+        coverInput.value = '1';
+        btnAddCover.textContent = 'Remove Cover';
+        btnAddCover.classList.replace('btn--outline', 'btn--primary');
+        coverCostRow.style.display = 'flex';
+        coverAdded = true;
+        totalPriceEl.textContent = formatPKR(baseTotal + coverPrice);
       }
-      refreshTotals();
     });
   }
 });

@@ -171,6 +171,11 @@ document.addEventListener('DOMContentLoaded', () => {
         guests,
       });
 
+      if (type === 'holiday') {
+        const departure = formData.get('departure');
+        if (departure) params.append('departure', String(departure).trim());
+      }
+
       window.location.href = `/search/?${params.toString()}`;
     });
   };

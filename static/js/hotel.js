@@ -10,26 +10,39 @@ document.addEventListener('DOMContentLoaded', () => {
   const checkOut = searchParams.get('check_out') || '2026-07-22';
   const requestedGuests = Math.max(1, Number(searchParams.get('guests') || 2));
 
+  const nights = Math.max(1, (new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24));
+  const transportPrice = Number(document.body.dataset.transportPrice || 0);
+  const transportId = document.body.dataset.transportId || '';
+
   const updateBookingSummary = (button) => {
     if (!button) return;
     const pricePerPerson = Number(button.dataset.pricePp);
+    const roomTotal = pricePerPerson * requestedGuests * nights;
+    const transportTotal = transportPrice * requestedGuests;
+    
     const booking = {
       roomId: button.dataset.roomId,
       roomName: button.dataset.roomName,
       board: button.dataset.board,
       pricePerPerson,
       guests: requestedGuests,
+      nights,
       checkIn,
       checkOut,
       location: document.body.dataset.hotelLocation || '',
-      total: pricePerPerson * requestedGuests,
+      total: roomTotal + transportTotal,
+      transportId,
     };
 
     localStorage.setItem('travelHuhBooking', JSON.stringify(booking));
     if (bookingRoomName) bookingRoomName.textContent = booking.roomName;
     if (bookingBoard) bookingBoard.textContent = booking.board;
     if (bookingTotal) bookingTotal.textContent = `Rs ${booking.total.toLocaleString('en-PK')}`;
-    if (bookingContinue) bookingContinue.href = `/checkout/?check_in=${encodeURIComponent(booking.checkIn)}&check_out=${encodeURIComponent(booking.checkOut)}&guests=${booking.guests}&room_id=${encodeURIComponent(booking.roomId)}`;
+    let checkoutUrl = `/checkout/?check_in=${encodeURIComponent(booking.checkIn)}&check_out=${encodeURIComponent(booking.checkOut)}&guests=${booking.guests}&room_id=${encodeURIComponent(booking.roomId)}`;
+    if (booking.transportId) {
+        checkoutUrl += `&transport_id=${encodeURIComponent(booking.transportId)}`;
+    }
+    if (bookingContinue) bookingContinue.href = checkoutUrl;
   };
 
   // --- Tabs Logic ---
