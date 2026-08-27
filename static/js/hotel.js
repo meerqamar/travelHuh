@@ -48,6 +48,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const targetPanel = document.getElementById(targetId);
       if (targetPanel) {
         targetPanel.classList.add('active');
+        if (targetId === 'location' && window.hotelMap) {
+          setTimeout(() => {
+            window.hotelMap.invalidateSize();
+          }, 100);
+        }
       }
     });
   });

@@ -190,6 +190,14 @@ h1, h2, h3, h4, h5, h6 {
 .text-muted   { color: var(--color-text-muted); }
 .text-white   { color: var(--color-white); }
 
+/* Background Utilities */
+.bg-pink      { background-color: var(--color-pink); }
+.bg-green     { background-color: var(--color-green); }
+.bg-yellow    { background-color: var(--color-yellow); }
+.bg-cyan      { background-color: var(--color-cyan); }
+.bg-light     { background-color: var(--color-bg); }
+.bg-white     { background-color: var(--color-white); }
+
 .text-center { text-align: center; }
 .text-left   { text-align: left; }
 .text-right  { text-align: right; }
