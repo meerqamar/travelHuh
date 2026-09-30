@@ -40,13 +40,13 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('checkout-guests').value = booking.guests || document.getElementById('checkout-guests').value;
     document.getElementById('checkout-check-in').value = booking.checkIn || document.getElementById('checkout-check-in').value;
     document.getElementById('checkout-check-out').value = booking.checkOut || document.getElementById('checkout-check-out').value;
-    if (!basePrice && booking.total) basePrice = Number(booking.total);
+    if (!baseTotal && booking.total) baseTotal = Number(booking.total);
     if (adultsLabel) adultsLabel.textContent = `Adults (x${booking.guests || 2})`;
-    if (roomTotalEl && basePrice) roomTotalEl.textContent = formatPKR(basePrice);
+    if (roomTotalEl && baseTotal) roomTotalEl.textContent = formatPKR(baseTotal);
     if (checkoutLocation && booking.location) checkoutLocation.textContent = booking.location;
   }
 
-  const currentTotal = () => basePrice + (coverAdded ? coverPrice : 0);
+  const currentTotal = () => baseTotal + (coverAdded ? coverPrice : 0);
 
   const refreshTotals = () => {
     const total = currentTotal();
